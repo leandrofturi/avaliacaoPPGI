@@ -2,7 +2,7 @@ package avaliacaoPPGI;
 
 import utils.PairList;
 
-class Veiculo {
+abstract class Veiculo {
 	
 	private String sigla;
 	private String nome;
@@ -71,8 +71,4 @@ class Veiculo {
 		return true;
 	}
 	
-	@Override
-	public String toString() {
-		return "Veiculo [sigla=" + sigla + ", nome=" + nome + ", fatorDeImpacto=" + fatorDeImpacto + "]";
-	}
 }

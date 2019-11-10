@@ -10,6 +10,10 @@ public class AvaliacaoPPGI {
 		sis.carregaArquivoDocentes("entradas/01/in/docentes.csv");
 		sis.carregaArquivoVeiculos("entradas/01/in/veiculos.csv");
 		sis.carregaArquivoQualificacoes("entradas/01/in/qualis.csv");
+		sis.carregaArquivoPublicacoes("entradas/01/in/publicacoes.csv");
+		sis.imprimeDocentes();
+		sis.imprimePublicacoes();
+		sis.imprimeVeiculos();
 	}
 
 }
