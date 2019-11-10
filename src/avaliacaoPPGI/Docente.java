@@ -2,18 +2,26 @@ package avaliacaoPPGI;
 
 import java.util.Date;
 
-public class Docente {
+class Docente {
 	
-	int codigo;
-	String nome;
-	Date dataNascimento;
-	Date dataIngresso;
+	private Long codigo;
+	private String nome;
+	private Date dataNascimento;
+	private Date dataIngresso;
 	
-	public int getCodigo() {
+	public Docente(Long codigo, String nome, Date dataNascimento, Date dataIngresso) {
+		super();
+		this.codigo = codigo;
+		this.nome = nome;
+		this.dataNascimento = dataNascimento;
+		this.dataIngresso = dataIngresso;
+	}
+
+	public Long getCodigo() {
 		return codigo;
 	}
 	
-	public void setCodigo(int codigo) {
+	public void setCodigo(Long codigo) {
 		this.codigo = codigo;
 	}
 	
@@ -41,8 +49,6 @@ public class Docente {
 		this.dataIngresso = dataIngresso;
 	}
 
-
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -56,13 +62,11 @@ public class Docente {
 			return false;
 		return true;
 	}
-
 	
 	@Override
 	public String toString() {
 		return "Docente [codigo=" + codigo + ", nome=" + nome + ", dataDeNascimento=" + dataNascimento + ", dataDeIngresso="
 				+ dataIngresso + "]";
 	}
-	
 	
 }

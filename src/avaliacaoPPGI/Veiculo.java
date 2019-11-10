@@ -1,13 +1,21 @@
 package avaliacaoPPGI;
 
+import utils.PairList;
+
 class Veiculo {
 	
 	private String sigla;
 	private String nome;
-	private Character tipo;
 	private float fatorDeImpacto;
-	private String ISSN;
+	private PairList<Integer, String> qualis = new PairList<Integer, String>();
 	
+	public Veiculo(String sigla, String nome, float fatorDeImpacto) {
+		super();
+		this.sigla = sigla;
+		this.nome = nome;
+		this.fatorDeImpacto = fatorDeImpacto;
+	}
+
 	public String getSigla() {
 		return sigla;
 	}
@@ -24,14 +32,6 @@ class Veiculo {
 		this.nome = nome;
 	}
 	
-	public Character getTipo() {
-		return tipo;
-	}
-	
-	public void setTipo(Character tipo) {
-		this.tipo = tipo;
-	}
-	
 	public float getFatorDeImpacto() {
 		return fatorDeImpacto;
 	}
@@ -40,12 +40,18 @@ class Veiculo {
 		this.fatorDeImpacto = fatorDeImpacto;
 	}
 	
-	public String getISSN() {
-		return ISSN;
+	public String getQualis(int ano) {
+		for(int a = ano; a > 0; a--) {
+			String q = qualis.findByFirst(ano).getSecond();
+			if(q != null)
+				return q;
+		}
+		return null;
 	}
 	
-	public void setISSN(String iSSN) {
-		ISSN = iSSN;
+	public void addQualis(int ano, String qualis) {
+		if(!this.qualis.contains(ano, qualis))
+			this.qualis.put(ano, qualis);
 	}
 
 	@Override
@@ -57,17 +63,16 @@ class Veiculo {
 		if (getClass() != obj.getClass())
 			return false;
 		Veiculo other = (Veiculo) obj;
-		if (ISSN == null) {
-			if (other.ISSN != null)
+		if (sigla == null) {
+			if (other.sigla != null)
 				return false;
-		} else if (!ISSN.equals(other.ISSN))
+		} else if (!sigla.equals(other.sigla))
 			return false;
 		return true;
 	}
 	
 	@Override
 	public String toString() {
-		return "Veiculo [sigla=" + sigla + ", nome=" + nome + ", tipo=" + tipo + ", fatorDeImpacto=" + fatorDeImpacto
-				+ ", ISSN=" + ISSN + "]";
+		return "Veiculo [sigla=" + sigla + ", nome=" + nome + ", fatorDeImpacto=" + fatorDeImpacto + "]";
 	}
 }
