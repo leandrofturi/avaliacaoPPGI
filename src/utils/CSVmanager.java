@@ -1,32 +1,34 @@
 package utils;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import exceptions.ErroDeIO;
+
 public class CSVmanager {
 
-	public ArrayList<String[]> CSVread(String path, char sep, char dec, boolean header) throws IOException {
+	public static ArrayList<String[]> CSVread(String path, char sep, char dec, boolean header) throws ErroDeIO {
 		
-		File file = new File(path);
-		FileReader fr = new FileReader(file);
-		BufferedReader br = new BufferedReader(fr);
-		ArrayList<String[]> list = new ArrayList<String[]>();
-		
-		if(header == true)
-			br.readLine();
+		try(BufferedReader br = new BufferedReader(new FileReader(path))) {
+			ArrayList<String[]> list = new ArrayList<String[]>();
 			
-		while(br.ready()) {
-			String[] linha = br.readLine().split(";");
-			if(linha.length != 0)
-				list.add(linha);
+			if(header == true)
+				br.readLine();
+				
+			while(br.ready()) {
+				String[] linha = br.readLine().split(";");
+				if(linha.length != 0)
+					list.add(linha);
+			}
+			
+			br.close();
+			return list;
+		}
+		catch (IOException e){
+			throw new ErroDeIO();
 		}
 		
-		br.close();
-		fr.close();
-		
-		return list;
 	}
 }

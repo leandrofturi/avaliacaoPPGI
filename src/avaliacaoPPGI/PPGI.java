@@ -6,14 +6,18 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import exceptions.ErroDeFormatacao;
+import exceptions.ErroDeIO;
 import utils.CSVmanager;
+import utils.PairList;
 
-public class SistemaPPGI {
+public class PPGI {
 	
 	private ArrayList<Docente> docentes = new ArrayList<Docente>();
-	private Docente coordenador;
+	private Docente coordenador = null;
 	private ArrayList<Veiculo> veiculos = new ArrayList<Veiculo>();
 	private ArrayList<Publicacao> publicacoes = new ArrayList<Publicacao>();
+	private PontuadorPPGI pontuador;
 	
 	public Docente getDocente(Long codigo) {
 		for(Docente aux : this.docentes) {
@@ -69,13 +73,11 @@ public class SistemaPPGI {
 			System.out.println(aux);
 	}
 
-	public void carregaArquivoDocentes(String path) throws IOException {
+	public void carregaArquivoDocentes(String path) throws IOException, ErroDeFormatacao, ErroDeIO {
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		CSVmanager reader = new CSVmanager();
-		ArrayList<String[]> csv = reader.CSVread(path, ';', '.', true);
 		
-		for(String[] aux : csv) {
+		for(String[] aux : CSVmanager.CSVread(path, ';', '.', true)) {
 			
 			Long codigo;
 			String nome;
@@ -85,8 +87,7 @@ public class SistemaPPGI {
 			try {
 				codigo = Long.parseUnsignedLong(aux[0].trim());
 			} catch (NumberFormatException e) {
-				System.err.println("Erro de formatacao");
-				return;
+				throw new ErroDeFormatacao();
 			}
 			
 			nome = aux[1].trim();
@@ -94,31 +95,33 @@ public class SistemaPPGI {
 			try {
 	            dataNascimento = formatter.parse(aux[2].trim());
 	        } catch (ParseException e) {
-	        	System.err.println("Erro de formatacao");
-	        	return;
+	        	throw new ErroDeFormatacao();
 	        }
 			
 			try {
 	            dataIngresso = formatter.parse(aux[2].trim());
 	        } catch (ParseException e) {
-	        	System.err.println("Erro de formatacao");
-	        	return;
+	        	throw new ErroDeFormatacao();
 	        }
 			
 			Docente docente = new Docente(codigo, nome, dataNascimento, dataIngresso);
+			if(this.docentes.contains(docente)) {
+				System.out.println("Codigo repetido para docente: " + aux[0].trim());
+			}
 			this.addDocente(docente);
 			
-			// PENSAR NESSE CASO
-			if(aux[3].trim().equals("X"))
-				coordenador = docente;
+			if(aux[3].trim().equals("X")) {
+				if(this.coordenador != null) {
+					throw new ErroDeFormatacao();
+				}
+				this.coordenador = docente;
+			}
 		}
 	}
 	
-	public void carregaArquivoVeiculos(String path) throws IOException {
-		CSVmanager reader = new CSVmanager();
-		ArrayList<String[]> csv = reader.CSVread(path, ';', '.', true);
+	public void carregaArquivoVeiculos(String path) throws IOException, ErroDeFormatacao, ErroDeIO {
 
-		for(String[] aux : csv) {
+		for(String[] aux : CSVmanager.CSVread(path, ';', '.', true)) {
 			
 			String sigla;
 			String nome;
@@ -131,8 +134,7 @@ public class SistemaPPGI {
 			try {
 				fatorDeImpacto = Float.parseFloat(aux[3].replace(',', '.').trim());
 			} catch (NumberFormatException e) {
-				System.err.println("Erro de formatacao");
-				return;
+				throw new ErroDeFormatacao();
 			}
 			
 			if(aux[2].trim().equals("P")) {
@@ -151,11 +153,10 @@ public class SistemaPPGI {
 		}
 	}
 	
-	public void carregaArquivoPublicacoes(String path) throws IOException {
-		CSVmanager reader = new CSVmanager();
-		ArrayList<String[]> csv = reader.CSVread(path, ';', '.', true);
+	public void carregaArquivoPublicacoes(String path) throws IOException, ErroDeFormatacao, ErroDeIO {
 		
-		for(String[] aux : csv) {
+		for(String[] aux : CSVmanager.CSVread(path, ';', '.', true)) {
+			
 			int ano;
 			String siglaVeiculo; Veiculo veiculo;
 			String titulo;
@@ -169,8 +170,7 @@ public class SistemaPPGI {
 			try {
 				ano = Integer.parseInt(aux[0].trim());
 			} catch (NumberFormatException e) {
-				System.err.println("Erro de formatacao");
-				return;
+				throw new ErroDeFormatacao();
 			}
 			
 			siglaVeiculo = aux[1].trim();
@@ -186,8 +186,7 @@ public class SistemaPPGI {
 				try {
 					codAutor = Long.parseUnsignedLong(autorAux.trim());
 				} catch (NumberFormatException e) {
-					System.err.println("Erro de formatacao");
-					return;
+					throw new ErroDeFormatacao();
 				}
 				autor = this.getDocente(codAutor);
 				if(autor == null) {
@@ -201,22 +200,19 @@ public class SistemaPPGI {
 			try {
 				numero = Integer.parseInt(aux[4].trim());
 			} catch (NumberFormatException e) {
-				System.err.println("Erro de formatacao");
-				return;
+				throw new ErroDeFormatacao();
 			}
 			
 			try {
 				paginaInicial = Integer.parseInt(aux[7].trim());
 			} catch (NumberFormatException e) {
-				System.err.println("Erro de formatacao");
-				return;
+				throw new ErroDeFormatacao();
 			}
 			
 			try {
 				paginaFinal = Integer.parseInt(aux[8].trim());
 			} catch (NumberFormatException e) {
-				System.err.println("Erro de formatacao");
-				return;
+				throw new ErroDeFormatacao();
 			}
 			
 			if(veiculo instanceof Periodico) {
@@ -224,8 +220,7 @@ public class SistemaPPGI {
 				try {
 					volume = Integer.parseInt(aux[5].trim());
 				} catch (NumberFormatException e) {
-					System.err.println("Erro de formatacao");
-					return;
+					throw new ErroDeFormatacao();
 				}
 				
 				Publicacao publicacao = new PublicacaoPeriodico(ano, veiculo, titulo, autores,
@@ -250,11 +245,9 @@ public class SistemaPPGI {
 
 	}
 	
-	public void carregaArquivoQualificacoes(String path) throws IOException {
-		CSVmanager reader = new CSVmanager();
-		ArrayList<String[]> csv = reader.CSVread(path, ';', '.', true);
-
-		for(String[] aux : csv) {
+	public void carregaArquivoQualificacoes(String path) throws IOException, ErroDeFormatacao, ErroDeIO {
+		
+		for(String[] aux : CSVmanager.CSVread(path, ';', '.', true)) {
 			
 			int ano;
 			String sigla;
@@ -263,8 +256,7 @@ public class SistemaPPGI {
 			try {
 				ano = Integer.parseInt(aux[0].trim());
 			} catch (NumberFormatException e) {
-				System.err.println("Erro de formatacao");
-				return;
+				throw new ErroDeFormatacao();
 			}
 			
 			sigla = aux[1].trim();
@@ -280,12 +272,68 @@ public class SistemaPPGI {
 		}
 	}
 	
-	public void carregaArquivoPontuacoes(String path) throws IOException {
-		CSVmanager reader = new CSVmanager();
-		ArrayList<String[]> csv = reader.CSVread(path, ';', '.', true);
-
-		for(String[] aux : csv) {
+	public void carregaArquivoPontuacoes(String path) throws IOException, ErroDeIO, ErroDeFormatacao {
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		
+		for(String[] aux : CSVmanager.CSVread(path, ';', '.', true)) {
 			
+			Date dataInicio;
+			Date dataFim;
+			PairList<String, Integer> qualis = new PairList<String, Integer>(); String[] quali; String[] pontos;
+			float multiplicador;
+			int qtdAnosAConsiderar;
+			int pontuacaoMinRecredenciamento;
+			
+			try {
+				dataInicio = formatter.parse(aux[0].trim());
+	        } catch (ParseException e) {
+	        	throw new ErroDeFormatacao();
+	        }
+			
+			try {
+				dataFim = formatter.parse(aux[1].trim());
+	        } catch (ParseException e) {
+	        	throw new ErroDeFormatacao();
+	        }
+			
+			quali = aux[2].trim().split(",");
+			pontos = aux[3].trim().split(",");
+			if(quali.length != pontos.length) {
+				throw new ErroDeFormatacao();
+			}
+			for(int i = 0; i < quali.length; i++) {
+				String qual;
+				int ponto;
+				
+				qual = quali[i].trim();
+				try {
+					ponto = Integer.parseInt(aux[5].trim());
+				} catch (NumberFormatException e) {
+					throw new ErroDeFormatacao();
+				}
+				qualis.put(qual, ponto);
+			}
+			
+			try {
+				multiplicador = Float.parseFloat(aux[4].replace(',', '.').trim());
+			} catch (NumberFormatException e) {
+				throw new ErroDeFormatacao();
+			}
+			
+			try {
+				qtdAnosAConsiderar = Integer.parseInt(aux[5].trim());
+			} catch (NumberFormatException e) {
+				throw new ErroDeFormatacao();
+			}
+			
+			try {
+				pontuacaoMinRecredenciamento = Integer.parseInt(aux[6].trim());
+			} catch (NumberFormatException e) {
+				throw new ErroDeFormatacao();
+			}
+			
+			this.pontuador = new PontuadorPPGI(dataInicio, dataFim, qualis, multiplicador, qtdAnosAConsiderar, pontuacaoMinRecredenciamento);
 		}
 	}
 }

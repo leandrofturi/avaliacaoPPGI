@@ -2,11 +2,14 @@ package avaliacaoPPGI;
 
 import java.io.IOException;
 
+import exceptions.ErroDeFormatacao;
+import exceptions.ErroDeIO;
+
 public class AvaliacaoPPGI {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, ErroDeFormatacao, ErroDeIO {
 		
-		SistemaPPGI sis = new SistemaPPGI();
+		PPGI sis = new PPGI();
 		sis.carregaArquivoDocentes("entradas/01/in/docentes.csv");
 		sis.carregaArquivoVeiculos("entradas/01/in/veiculos.csv");
 		sis.carregaArquivoQualificacoes("entradas/01/in/qualis.csv");
