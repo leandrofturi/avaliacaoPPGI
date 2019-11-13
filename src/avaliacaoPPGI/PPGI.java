@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 import exceptions.ErroDeFormatacao;
@@ -17,7 +18,7 @@ public class PPGI {
 	private Docente coordenador = null;
 	private ArrayList<Veiculo> veiculos = new ArrayList<Veiculo>();
 	private ArrayList<Publicacao> publicacoes = new ArrayList<Publicacao>();
-	private PontuadorPPGI pontuador;
+	private ArrayList<PontuadorPPGI> pontuadores = new ArrayList<PontuadorPPGI>();
 	
 	public Docente getDocente(Long codigo) {
 		for(Docente aux : this.docentes) {
@@ -77,7 +78,7 @@ public class PPGI {
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		
-		for(String[] aux : CSVmanager.CSVread(path, ';', '.', true)) {
+		for(String[] aux : CSVmanager.CSVread(path, ';', true)) {
 			
 			Long codigo;
 			String nome;
@@ -117,11 +118,12 @@ public class PPGI {
 				this.coordenador = docente;
 			}
 		}
+		Collections.sort(this.docentes);
 	}
 	
 	public void carregaArquivoVeiculos(String path) throws IOException, ErroDeFormatacao, ErroDeIO {
 
-		for(String[] aux : CSVmanager.CSVread(path, ';', '.', true)) {
+		for(String[] aux : CSVmanager.CSVread(path, ';', true)) {
 			
 			String sigla;
 			String nome;
@@ -155,7 +157,7 @@ public class PPGI {
 	
 	public void carregaArquivoPublicacoes(String path) throws IOException, ErroDeFormatacao, ErroDeIO {
 		
-		for(String[] aux : CSVmanager.CSVread(path, ';', '.', true)) {
+		for(String[] aux : CSVmanager.CSVread(path, ';', true)) {
 			
 			int ano;
 			String siglaVeiculo; Veiculo veiculo;
@@ -247,7 +249,7 @@ public class PPGI {
 	
 	public void carregaArquivoQualificacoes(String path) throws IOException, ErroDeFormatacao, ErroDeIO {
 		
-		for(String[] aux : CSVmanager.CSVread(path, ';', '.', true)) {
+		for(String[] aux : CSVmanager.CSVread(path, ';', true)) {
 			
 			int ano;
 			String sigla;
@@ -276,7 +278,7 @@ public class PPGI {
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		
-		for(String[] aux : CSVmanager.CSVread(path, ';', '.', true)) {
+		for(String[] aux : CSVmanager.CSVread(path, ';', true)) {
 			
 			Date dataInicio;
 			Date dataFim;
@@ -333,7 +335,39 @@ public class PPGI {
 				throw new ErroDeFormatacao();
 			}
 			
-			this.pontuador = new PontuadorPPGI(dataInicio, dataFim, qualis, multiplicador, qtdAnosAConsiderar, pontuacaoMinRecredenciamento);
+			PontuadorPPGI pontuador = new PontuadorPPGI(dataInicio, dataFim, qualis, multiplicador, qtdAnosAConsiderar, pontuacaoMinRecredenciamento);
+			
+			if(this.pontuadores.contains(pontuador)) {
+				throw new ErroDeFormatacao();
+			}
+			this.pontuadores.add(pontuador);
 		}
 	}
+	
+	public void escreveArquivoRecredenciamento(String path) throws ErroDeIO, IOException {
+		
+		ArrayList<String[]> content = new ArrayList<String[]>();
+		Collections.sort(this.docentes);
+		
+		for(Docente docente : this.docentes) {
+			String[] line = new String[3];
+			line[0] = docente.getNome();
+			
+			line[1] = "Pontuacao alcancada";
+			
+			if(docente.equals(this.coordenador))
+				line[2] = "Coordenador";
+			else if(docente.getTempoDeIngresso() <= 3)
+				line[2] = "PPJ";
+			else if(docente.getIdade() > 60)
+				line[2] = "PPS";
+			//else if docente não se enquadra nos casos acima e alcançou a pontuação mínima
+			else
+				line[2] = "Nao";
+			content.add(line);
+		}
+		
+		CSVmanager.CSVwriter(content, "recredenciamento.csv", ';', ',');
+	}
+	
 }

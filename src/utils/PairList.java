@@ -69,4 +69,10 @@ public class PairList<F, S> {
 		}
 		return null;
 	}
+
+	@Override
+	public String toString() {
+		return "PairList [" + list + "]";
+	}
+	
 }

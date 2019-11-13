@@ -1,5 +1,6 @@
 package avaliacaoPPGI;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import utils.PairList;
@@ -37,4 +38,18 @@ public class PontuadorPPGI extends PPGI {
 		this.qtdAnosAConsiderar = qtdAnosAConsiderar;
 		this.pontuacaoMinRecredenciamento = pontuacaoMinRecredenciamento;
 	}
+
+	@Override
+	public String toString() {
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		return "PontuadorPPGI [dataInicio=" + formatter.format(dataInicio) + ", dataFim=" + formatter.format(dataFim) + ", qualis=" + qualis
+				+ ", multiplicador=" + multiplicador + ", qtdAnosAConsiderar=" + qtdAnosAConsiderar
+				+ ", pontuacaoMinRecredenciamento=" + pontuacaoMinRecredenciamento + "]";
+	}
+	
+	public int calculaPontuacao(Docente docente) {
+		
+		return pontuacaoMinRecredenciamento;
+	}
+	
 }

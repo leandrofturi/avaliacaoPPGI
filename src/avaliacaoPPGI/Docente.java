@@ -1,8 +1,12 @@
 package avaliacaoPPGI;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-class Docente {
+class Docente implements Comparable<Docente> {
 	
 	private Long codigo;
 	private String nome;
@@ -48,6 +52,16 @@ class Docente {
 	public void setDataIngresso(Date dataIngresso) {
 		this.dataIngresso = dataIngresso;
 	}
+	
+	public long getIdade() {
+		return ChronoUnit.YEARS.between((this.dataNascimento).toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+				LocalDate.now());
+	}
+	
+	public long getTempoDeIngresso() {
+		return ChronoUnit.YEARS.between((this.dataIngresso).toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+				LocalDate.now());
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -65,8 +79,14 @@ class Docente {
 	
 	@Override
 	public String toString() {
-		return "Docente [codigo=" + codigo + ", nome=" + nome + ", dataDeNascimento=" + dataNascimento + ", dataDeIngresso="
-				+ dataIngresso + "]";
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		return "Docente [codigo=" + codigo + ", nome=" + nome + ", dataDeNascimento=" + formatter.format(dataNascimento) + ", dataDeIngresso="
+				+ formatter.format(dataIngresso) + "]";
+	}
+	
+	@Override
+	public int compareTo(Docente docente) {
+	  return this.nome.compareTo(docente.nome);
 	}
 	
 }
