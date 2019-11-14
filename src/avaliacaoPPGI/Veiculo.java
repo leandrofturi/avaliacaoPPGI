@@ -1,5 +1,6 @@
 package avaliacaoPPGI;
 
+import utils.Pair;
 import utils.PairList;
 
 abstract class Veiculo {
@@ -41,12 +42,12 @@ abstract class Veiculo {
 	}
 	
 	public String getQualis(int ano) {
-		for(int a = ano; a > 0; a--) {
-			String q = qualis.findByFirst(ano).getSecond();
-			if(q != null)
-				return q;
+		
+		for(Pair<Integer, String> aux : this.qualis) {
+			if(aux.getFirst() < ano)
+				return aux.getSecond();
 		}
-		return null;
+		return this.qualis.begin().getSecond();
 	}
 	
 	public void addQualis(int ano, String qualis) {

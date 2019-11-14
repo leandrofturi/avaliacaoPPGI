@@ -2,7 +2,7 @@ package avaliacaoPPGI;
 
 import java.util.ArrayList;
 
-public class PublicacaoPeriodico extends Publicacao {
+class PublicacaoPeriodico extends Publicacao {
 
 	private int numero;
 	private int volume;
@@ -31,7 +31,9 @@ public class PublicacaoPeriodico extends Publicacao {
 
 	@Override
 	public String toString() {
-		return "PublicacaoPeriodico [veiculo=" + veiculo + "numero=" + numero + ", volume=" + volume + "]";
+		return "PublicacaoPeriodico [numero=" + numero + ", volume=" + volume + ", ano=" + ano + ", veiculo=" + veiculo
+				+ ", titulo=" + titulo + ", autores=" + autores + ", paginaInicial=" + paginaInicial + ", paginaFinal="
+				+ paginaFinal + "]";
 	}
-	
+
 }

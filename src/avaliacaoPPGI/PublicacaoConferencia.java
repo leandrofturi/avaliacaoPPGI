@@ -2,7 +2,7 @@ package avaliacaoPPGI;
 
 import java.util.ArrayList;
 
-public class PublicacaoConferencia extends Publicacao {
+class PublicacaoConferencia extends Publicacao {
 
 	private int numero;
 	private String localConferencia;
@@ -28,10 +28,12 @@ public class PublicacaoConferencia extends Publicacao {
 	public void setLocalConferencia(String localConferencia) {
 		this.localConferencia = localConferencia;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "PublicacaoConferencia [veiculo=" + veiculo + "numero=" + numero + ", localConferencia=" + localConferencia + "]";
+		return "PublicacaoConferencia [numero=" + numero + ", localConferencia=" + localConferencia + ", ano=" + ano
+				+ ", veiculo=" + veiculo + ", titulo=" + titulo + ", autores=" + autores + ", paginaInicial="
+				+ paginaInicial + ", paginaFinal=" + paginaFinal + "]";
 	}
 	
 }

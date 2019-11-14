@@ -3,9 +3,13 @@ package avaliacaoPPGI;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Objects;
 
 import exceptions.ErroDeFormatacao;
 import exceptions.ErroDeIO;
@@ -20,7 +24,7 @@ public class PPGI {
 	private ArrayList<Publicacao> publicacoes = new ArrayList<Publicacao>();
 	private ArrayList<PontuadorPPGI> pontuadores = new ArrayList<PontuadorPPGI>();
 	
-	public Docente getDocente(Long codigo) {
+	protected Docente getDocente(Long codigo) {
 		for(Docente aux : this.docentes) {
 			if(aux.getCodigo().equals(codigo))
 				return aux;
@@ -28,7 +32,7 @@ public class PPGI {
 		return null;
 	}
 	
-	public void addDocente(Docente docente) {
+	protected void addDocente(Docente docente) {
 		if(!this.docentes.contains(docente))
 			this.docentes.add(docente);
 	}
@@ -38,15 +42,19 @@ public class PPGI {
 			System.out.println(aux);
 	}
 	
-	public Docente getCoordenador() {
+	protected Docente getCoordenador() {
 		return coordenador;
 	}
 
-	public void setCoordenador(Docente coordenador) {
+	protected void setCoordenador(Docente coordenador) {
 		this.coordenador = coordenador;
 	}
 	
-	public Veiculo getVeiculo(String sigla) {
+	public void imprimeCoordenador() {
+		System.out.println(this.coordenador);
+	}
+	
+	protected Veiculo getVeiculo(String sigla) {
 		for(Veiculo aux : this.veiculos) {
 			if(aux.getSigla().equals(sigla))
 				return aux;
@@ -54,7 +62,7 @@ public class PPGI {
 		return null;
 	}
 	
-	public void addVeiculo(Veiculo veiculo) {
+	protected void addVeiculo(Veiculo veiculo) {
 		if(!this.veiculos.contains(veiculo))
 			this.veiculos.add(veiculo);
 	}
@@ -64,7 +72,7 @@ public class PPGI {
 			System.out.println(aux);
 	}
 	
-	public void addPublicacao(Publicacao publicacao) {
+	protected void addPublicacao(Publicacao publicacao) {
 		if(!this.publicacoes.contains(publicacao))
 			this.publicacoes.add(publicacao);
 	}
@@ -73,7 +81,58 @@ public class PPGI {
 		for(Publicacao aux : this.publicacoes)
 			System.out.println(aux);
 	}
+	
+	protected ArrayList<Publicacao> publicacoesPorDocente(Docente docente) {
 
+		ArrayList<Publicacao> publicacoesDocente = new ArrayList<Publicacao>();
+		for(Publicacao aux : this.publicacoes) {
+			if(aux.isAutor(docente)) {
+				publicacoesDocente.add(aux);
+			}
+		}
+
+		return publicacoesDocente;
+	}
+	
+	private PontuadorPPGI getPontuador(int ano) {
+		
+		PontuadorPPGI pontuador = this.pontuadores.get(0);
+		for(PontuadorPPGI aux : this.pontuadores) {
+			if(ChronoUnit.DAYS.between((aux.getDataInicio()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+					LocalDate.of(ano, 1, 1)) < 0)
+				break;
+			else
+				pontuador = aux;
+		}
+		return pontuador;
+		
+	}
+	
+	private int calculaPontuacao(int anoRecredenciamento, Docente docente) {
+
+		PontuadorPPGI pontuador = this.getPontuador(anoRecredenciamento);
+		int pontuacaoFinal = 0;
+		for(Publicacao aux : this.publicacoesPorDocente(docente)) {
+
+			if((anoRecredenciamento-aux.getAno() <= pontuador.getQtdAnosAConsiderar()) && (anoRecredenciamento >= aux.getAno())) {
+
+				if(aux instanceof PublicacaoPeriodico) {
+					pontuacaoFinal += pontuador.getMultiplicador()*pontuador.getPontuacao(aux.getQualis());
+				}
+				else if(aux instanceof PublicacaoConferencia) {
+					pontuacaoFinal += pontuador.getPontuacao(aux.getQualis());
+				}
+			}
+		}
+		
+		return pontuacaoFinal;
+	}
+
+	public void imprimePontuadores() {
+		for(PontuadorPPGI aux : this.pontuadores)
+			System.out.println(aux);
+	}
+	
 	public void carregaArquivoDocentes(String path) throws IOException, ErroDeFormatacao, ErroDeIO {
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -100,7 +159,7 @@ public class PPGI {
 	        }
 			
 			try {
-	            dataIngresso = formatter.parse(aux[2].trim());
+	            dataIngresso = formatter.parse(aux[3].trim());
 	        } catch (ParseException e) {
 	        	throw new ErroDeFormatacao();
 	        }
@@ -111,7 +170,7 @@ public class PPGI {
 			}
 			this.addDocente(docente);
 			
-			if(aux[3].trim().equals("X")) {
+			if((aux[4].trim().equals("X")) || (aux[4].trim().equals("x"))) {
 				if(this.coordenador != null) {
 					throw new ErroDeFormatacao();
 				}
@@ -183,7 +242,7 @@ public class PPGI {
 			}
 			
 			titulo = aux[2].trim();
-			
+
 			for(String autorAux : aux[3].split(",")) {
 				try {
 					codAutor = Long.parseUnsignedLong(autorAux.trim());
@@ -344,24 +403,27 @@ public class PPGI {
 		}
 	}
 	
-	public void escreveArquivoRecredenciamento(String path) throws ErroDeIO, IOException {
-		
+	public void escreveArquivoRecredenciamento(int ano, String path) throws ErroDeIO, IOException {
+
 		ArrayList<String[]> content = new ArrayList<String[]>();
+		content.add(new String[] {"Docente", "Pontuacao", "Recredenciado?"});
 		Collections.sort(this.docentes);
 		
 		for(Docente docente : this.docentes) {
 			String[] line = new String[3];
 			line[0] = docente.getNome();
 			
-			line[1] = "Pontuacao alcancada";
-			
+			int pontuacao = calculaPontuacao(ano, docente);
+			line[1] = Objects.toString(pontuacao);
+
 			if(docente.equals(this.coordenador))
 				line[2] = "Coordenador";
 			else if(docente.getTempoDeIngresso() <= 3)
 				line[2] = "PPJ";
 			else if(docente.getIdade() > 60)
 				line[2] = "PPS";
-			//else if docente não se enquadra nos casos acima e alcançou a pontuação mínima
+			else if(pontuacao >= this.getPontuador(ano).getPontuacaoMinRecredenciamento())
+				line[2] = "Sim";
 			else
 				line[2] = "Nao";
 			content.add(line);

@@ -14,15 +14,22 @@ public class CSVmanager {
 
 	public static ArrayList<String[]> CSVread(String path, char sep, boolean header) throws ErroDeIO {
 		
+		int colSize = 0;
 		try(BufferedReader br = new BufferedReader(new FileReader(path))) {
 			ArrayList<String[]> list = new ArrayList<String[]>();
 			
+			String[] linha;
 			if(header == true) {
-				br.readLine();
+				colSize = br.readLine().split(";").length;
 			}
 				
 			while(br.ready()) {
-				String[] linha = br.readLine().split(";");
+				String content = br.readLine();
+				if(header = true) {
+					for(int i = content.split(";").length; i < colSize; i++)
+						content += ";" + "NA";
+				}
+				linha = content.split(";");
 				if(linha.length != 0)
 					list.add(linha);
 			}

@@ -15,11 +15,11 @@ public class AvaliacaoPPGI {
 		sis.carregaArquivoQualificacoes("entradas/01/in/qualis.csv");
 		sis.carregaArquivoPublicacoes("entradas/01/in/publicacoes.csv");
 		sis.carregaArquivoPontuacoes("entradas/01/in/regras.csv");
-		sis.imprimeDocentes();
+		//sis.imprimeDocentes();
 		sis.imprimePublicacoes();
-		sis.imprimeVeiculos();
+		//sis.imprimeVeiculos();
 		
-		sis.escreveArquivoRecredenciamento("teste.csv");
+		sis.escreveArquivoRecredenciamento(2015, "teste.csv");
 	}
 
 }

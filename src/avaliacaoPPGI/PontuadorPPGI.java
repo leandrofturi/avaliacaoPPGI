@@ -5,14 +5,16 @@ import java.util.Date;
 
 import utils.PairList;
 
-public class PontuadorPPGI extends PPGI {
+public class PontuadorPPGI {
 
-	private final Date dataInicio;
-	private final Date dataFim;
-	private final PairList<String, Integer> qualis;
-	private final double multiplicador;
-	private final int qtdAnosAConsiderar;
-	private final int pontuacaoMinRecredenciamento;
+	private Date dataInicio;
+	private Date dataFim;
+	private PairList<String, Integer> qualis;
+	private double multiplicador;
+	private int qtdAnosAConsiderar;
+	private int pontuacaoMinRecredenciamento;
+	
+	private static String[] qualisRef = {"A1","A2","B1","B2","B3","B4","C"};
 	
 	public PontuadorPPGI(Date dataInicio, Date dataFim, double multiplicador, int qtdAnosAConsiderar, int pontuacaoMinRecredenciamento) {
 		super();
@@ -28,7 +30,7 @@ public class PontuadorPPGI extends PPGI {
 		if(!this.qualis.contains(qualis, pontos))
 			this.qualis.put(qualis, pontos);
 	}
-	
+
 	public PontuadorPPGI(Date dataInicio, Date dataFim, PairList<String, Integer> qualis, double multiplicador, int qtdAnosAConsiderar, int pontuacaoMinRecredenciamento) {
 		super();
 		this.dataInicio = dataInicio;
@@ -38,6 +40,40 @@ public class PontuadorPPGI extends PPGI {
 		this.qtdAnosAConsiderar = qtdAnosAConsiderar;
 		this.pontuacaoMinRecredenciamento = pontuacaoMinRecredenciamento;
 	}
+	
+	public Date getDataInicio() {
+		return dataInicio;
+	}
+
+	public Date getDataFim() {
+		return dataFim;
+	}
+
+	public int getPontuacaoMinRecredenciamento() {
+		return pontuacaoMinRecredenciamento;
+	}
+
+	public int getPontuacao(String quali) {
+
+		int pontuacao = 0;
+		for(String aux : PontuadorPPGI.qualisRef) {
+			if(this.qualis.findByFirst(aux) != null)
+				pontuacao = this.qualis.findByFirst(aux).getSecond();
+
+			if(aux.equals(quali))
+				break;
+		}
+
+		return pontuacao;
+	}
+
+	public double getMultiplicador() {
+		return multiplicador;
+	}
+
+	public int getQtdAnosAConsiderar() {
+		return qtdAnosAConsiderar;
+	}
 
 	@Override
 	public String toString() {
@@ -45,11 +81,6 @@ public class PontuadorPPGI extends PPGI {
 		return "PontuadorPPGI [dataInicio=" + formatter.format(dataInicio) + ", dataFim=" + formatter.format(dataFim) + ", qualis=" + qualis
 				+ ", multiplicador=" + multiplicador + ", qtdAnosAConsiderar=" + qtdAnosAConsiderar
 				+ ", pontuacaoMinRecredenciamento=" + pontuacaoMinRecredenciamento + "]";
-	}
-	
-	public int calculaPontuacao(Docente docente) {
-		
-		return pontuacaoMinRecredenciamento;
 	}
 	
 }

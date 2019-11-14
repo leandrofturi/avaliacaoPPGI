@@ -1,8 +1,9 @@
 package utils;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
-public class PairList<F, S> {
+public class PairList<F, S> implements Iterable<Pair<F, S>> {
 	private ArrayList<Pair<F, S>> list = new ArrayList<Pair<F, S>>();
 	
 	public PairList() { }
@@ -31,6 +32,14 @@ public class PairList<F, S> {
 		return this.contains(pair.getFirst(), pair.getSecond());
 	}
 	
+	public Pair<F, S> begin() {
+		return this.list.get(0);
+	}
+	
+	public Pair<F, S> end() {
+		return this.list.get(this.size());
+	}
+	
 	public void put(F first, S second) {
 		Pair<F, S> pair = new Pair<F, S> (first, second);
 		put(pair);
@@ -55,7 +64,7 @@ public class PairList<F, S> {
 	}
 	
 	public Pair<F, S> findByFirst(F first) {
-		for(Pair<F, S> p : list) {
+		for(Pair<F, S> p : this) {
 			if(p.getFirst().equals(first))
 				return p;
 		}
@@ -63,16 +72,37 @@ public class PairList<F, S> {
 	}
 	
 	public Pair<F, S> findBySecond(S second) {
-		for(Pair<F, S> p : list) {
+		for(Pair<F, S> p : this) {
 			if(p.getSecond().equals(second))
 				return p;
 		}
 		return null;
 	}
-
+	
+	public Pair<F, S> get(int i) {
+		return this.list.get(i);
+	}
+	
 	@Override
 	public String toString() {
 		return "PairList [" + list + "]";
 	}
+	
+	public Iterator<Pair<F, S>> iterator() {
+		return new PairIterator();
+	}
+	
+	class PairIterator implements Iterator<Pair<F, S>> {
+		
+		private int index = 0;
+		
+		public boolean hasNext() {
+	        return index < size();
+	    }
+
+	    public Pair<F, S> next() {
+	        return get(index++);
+	    }
+   }
 	
 }

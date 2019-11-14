@@ -37,6 +37,10 @@ abstract class Publicacao {
 	public void setVeiculo(Veiculo veiculo) {
 		this.veiculo = veiculo;
 	}
+	
+	public String getQualis() {
+		return (this.veiculo).getQualis(this.ano);
+	}
 
 	public String getTitulo() {
 		return titulo;
@@ -55,6 +59,10 @@ abstract class Publicacao {
 			this.autores.add(autor);
 	}
 	
+	public boolean isAutor(Docente autor) {
+		return this.autores.contains(autor);
+	}
+	
 	public int getPaginaInicial() {
 		return paginaInicial;
 	}
@@ -69,6 +77,12 @@ abstract class Publicacao {
 	
 	public void setPaginaFinal(int paginaFinal) {
 		this.paginaFinal = paginaFinal;
+	}
+
+	@Override
+	public String toString() {
+		return "Publicacao [ano=" + ano + ", veiculo=" + veiculo + ", titulo=" + titulo + ", autores=" + autores
+				+ ", paginaInicial=" + paginaInicial + ", paginaFinal=" + paginaFinal + "]";
 	}
 
 }
