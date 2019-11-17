@@ -1,6 +1,7 @@
 package avaliacaoPPGI;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -8,11 +9,11 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Objects;
 
-import exceptions.ErroDeFormatacao;
-import exceptions.ErroDeIO;
+import exceptions.*;
 import utils.CSVmanager;
 import utils.PairList;
 
@@ -86,12 +87,20 @@ public class PPGI {
 
 		ArrayList<Publicacao> publicacoesDocente = new ArrayList<Publicacao>();
 		for(Publicacao aux : this.publicacoes) {
-			if(aux.isAutor(docente)) {
+			if(aux.isAutor(docente))
 				publicacoesDocente.add(aux);
-			}
 		}
-
 		return publicacoesDocente;
+	}
+	
+	protected ArrayList<Publicacao> publicacoesPorQualis(String qualis) {
+		
+		ArrayList<Publicacao> publicacoesQualis = new ArrayList<Publicacao>();
+		for(Publicacao aux : this.publicacoes) {
+			if(aux.getQualis().equals(qualis))
+				publicacoesQualis.add(aux);
+		}
+		return publicacoesQualis;
 	}
 	
 	private PontuadorPPGI getPontuador(int ano) {
@@ -108,20 +117,19 @@ public class PPGI {
 		
 	}
 	
-	private int calculaPontuacao(int anoRecredenciamento, Docente docente) {
+	private float calculaPontuacao(int anoRecredenciamento, Docente docente) {
 
 		PontuadorPPGI pontuador = this.getPontuador(anoRecredenciamento);
-		int pontuacaoFinal = 0;
-		for(Publicacao aux : this.publicacoesPorDocente(docente)) {
+		float pontuacaoFinal = (float) 0.0;
 
+		for(Publicacao aux : this.publicacoesPorDocente(docente)) {
+			
 			if((anoRecredenciamento-aux.getAno() <= pontuador.getQtdAnosAConsiderar()) && (anoRecredenciamento >= aux.getAno())) {
 
-				if(aux instanceof PublicacaoPeriodico) {
+				if(aux instanceof PublicacaoPeriodico)
 					pontuacaoFinal += pontuador.getMultiplicador()*pontuador.getPontuacao(aux.getQualis());
-				}
-				else if(aux instanceof PublicacaoConferencia) {
+				else if(aux instanceof PublicacaoConferencia)
 					pontuacaoFinal += pontuador.getPontuacao(aux.getQualis());
-				}
 			}
 		}
 		
@@ -133,7 +141,7 @@ public class PPGI {
 			System.out.println(aux);
 	}
 	
-	public void carregaArquivoDocentes(String path) throws IOException, ErroDeFormatacao, ErroDeIO {
+	public void carregaArquivoDocentes(String path) throws IOException, ErroDeFormatacao, ErroDeIO, CodigoRepetido {
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		
@@ -166,7 +174,7 @@ public class PPGI {
 			
 			Docente docente = new Docente(codigo, nome, dataNascimento, dataIngresso);
 			if(this.docentes.contains(docente)) {
-				System.out.println("Codigo repetido para docente: " + aux[0].trim());
+				throw new CodigoRepetido("docente", aux[0].trim());
 			}
 			this.addDocente(docente);
 			
@@ -177,10 +185,10 @@ public class PPGI {
 				this.coordenador = docente;
 			}
 		}
-		Collections.sort(this.docentes);
+		
 	}
 	
-	public void carregaArquivoVeiculos(String path) throws IOException, ErroDeFormatacao, ErroDeIO {
+	public void carregaArquivoVeiculos(String path) throws IOException, ErroDeFormatacao, ErroDeIO, CodigoRepetido, VeiculoDesconhecido {
 
 		for(String[] aux : CSVmanager.CSVread(path, ';', true)) {
 			
@@ -201,20 +209,23 @@ public class PPGI {
 			if(aux[2].trim().equals("P")) {
 				String ISSN = aux[4].trim();
 				Periodico periodico = new Periodico(sigla, nome, fatorDeImpacto, ISSN);
+				if(this.veiculos.contains(periodico))
+					throw new CodigoRepetido("veiculo", aux[0].trim());
 				this.addVeiculo(periodico);
 			}
 			else if(aux[2].trim().equals("C")) {
 				Conferencia conferencia = new Conferencia(sigla, nome, fatorDeImpacto);
+				if(this.veiculos.contains(conferencia))
+					throw new CodigoRepetido("veiculo", aux[0].trim());
 				this.addVeiculo(conferencia);
 			}
 			else {
-				System.err.println("Tipo de veiculo desconhecido para veiculo\n" + aux[0].trim() + ":" + aux[2].trim());
-	        	return;
+				throw new VeiculoDesconhecido(aux[0].trim(), aux[2].trim());
 			}
 		}
 	}
 	
-	public void carregaArquivoPublicacoes(String path) throws IOException, ErroDeFormatacao, ErroDeIO {
+	public void carregaArquivoPublicacoes(String path) throws IOException, ErroDeFormatacao, ErroDeIO, CodSiglaNaoDefinido, CodigoRepetido, SiglaVeiculoNaoDefinida {
 		
 		for(String[] aux : CSVmanager.CSVread(path, ';', true)) {
 			
@@ -237,8 +248,7 @@ public class PPGI {
 			siglaVeiculo = aux[1].trim();
 			veiculo = this.getVeiculo(siglaVeiculo);
 			if(veiculo == null) {
-				System.err.println("Sigla de veiculo nao definida usada na publicacao " + aux[2].trim() + ": " + aux[1].trim() + ".");
-				return;
+				throw new CodSiglaNaoDefinido("veiculo", aux[2].trim(), aux[1].trim());
 			}
 			
 			titulo = aux[2].trim();
@@ -251,13 +261,12 @@ public class PPGI {
 				}
 				autor = this.getDocente(codAutor);
 				if(autor == null) {
-					System.err.println("Codigo de docente nao definido usado na publicacao " + titulo + ": " + codAutor + ".");
-					return;
+					throw new CodigoRepetido("docente", autorAux.trim());
 				}
 				if(!autores.contains(autor))
 					autores.add(autor);
 			}
-			
+
 			try {
 				numero = Integer.parseInt(aux[4].trim());
 			} catch (NumberFormatException e) {
@@ -299,14 +308,13 @@ public class PPGI {
 			}
 			
 			else {
-				System.err.println("Sigla de veiculo nao definida usada na publicacao " + aux[2].trim() + ": " + aux[1].trim() + ".");
-				return;
+				throw new SiglaVeiculoNaoDefinida(aux[0].trim(), aux[1].trim());
 			}
 		}
 
 	}
 	
-	public void carregaArquivoQualificacoes(String path) throws IOException, ErroDeFormatacao, ErroDeIO {
+	public void carregaArquivoQualificacoes(String path) throws IOException, ErroDeFormatacao, ErroDeIO, SiglaVeiculoNaoDefinida, QualiDesconhecidoVeiculo {
 		
 		for(String[] aux : CSVmanager.CSVread(path, ';', true)) {
 			
@@ -323,17 +331,18 @@ public class PPGI {
 			sigla = aux[1].trim();
 			
 			qualis = aux[2].trim();
+			if(!PontuadorPPGI.containsQualis(qualis))
+				throw new QualiDesconhecidoVeiculo(aux[2].trim(), aux[1].trim(), aux[0].trim());
 			
 			Veiculo veiculo = this.getVeiculo(sigla);
 			if(veiculo == null) {
-				System.err.println("Sigla de veiculo nao definida usada na qualificacao do ano " + ano + ": " + sigla + ".");
-				return;
+				throw new SiglaVeiculoNaoDefinida(aux[0].trim(), aux[1].trim());
 			}	
 			veiculo.addQualis(ano, qualis);
 		}
 	}
 	
-	public void carregaArquivoPontuacoes(String path) throws IOException, ErroDeIO, ErroDeFormatacao {
+	public void carregaArquivoPontuacoes(String path) throws IOException, ErroDeIO, ErroDeFormatacao, QualiDesconhecidoRegra {
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		
@@ -368,8 +377,11 @@ public class PPGI {
 				int ponto;
 				
 				qual = quali[i].trim();
+				if(!PontuadorPPGI.containsQualis(qual))
+					throw new QualiDesconhecidoRegra(quali[i].trim(), aux[0].trim());
+
 				try {
-					ponto = Integer.parseInt(aux[5].trim());
+					ponto = Integer.parseInt(pontos[i].trim());
 				} catch (NumberFormatException e) {
 					throw new ErroDeFormatacao();
 				}
@@ -403,18 +415,25 @@ public class PPGI {
 		}
 	}
 	
-	public void escreveArquivoRecredenciamento(int ano, String path) throws ErroDeIO, IOException {
+	public void escreveArquivoRecredenciamento(int ano) throws ErroDeIO, IOException {
 
 		ArrayList<String[]> content = new ArrayList<String[]>();
 		content.add(new String[] {"Docente", "Pontuacao", "Recredenciado?"});
-		Collections.sort(this.docentes);
+		DecimalFormat formater = new DecimalFormat("0.0");
+		
+		Collections.sort(this.docentes, new Comparator<Docente>() {
+			@Override
+		    public int compare(Docente d1, Docente d2) {
+		        return d1.getNome().compareTo(d2.getNome());
+		    }
+		});
 		
 		for(Docente docente : this.docentes) {
 			String[] line = new String[3];
 			line[0] = docente.getNome();
 			
-			int pontuacao = calculaPontuacao(ano, docente);
-			line[1] = Objects.toString(pontuacao);
+			float pontuacao = calculaPontuacao(ano, docente);
+			line[1] = formater.format(pontuacao);
 
 			if(docente.equals(this.coordenador))
 				line[2] = "Coordenador";
@@ -429,7 +448,80 @@ public class PPGI {
 			content.add(line);
 		}
 		
-		CSVmanager.CSVwriter(content, "recredenciamento.csv", ';', ',');
+		CSVmanager.CSVwriter(content, "1-recredenciamento.csv", ';', ',');
+	}
+	
+	public void escreveArquivoPublicacoes() throws ErroDeIO, IOException {
+		ArrayList<String[]> content = new ArrayList<String[]>();
+		content.add(new String[] {"Ano", "Sigla Veiculo", "Veiculo", "Qualis", "Fator de Impacto", "Titulo", "Docentes"});
+		DecimalFormat formater = new DecimalFormat("0.000");
+		
+		Collections.sort(this.publicacoes, new Comparator<Publicacao>() {
+			@Override
+		    public int compare(Publicacao p1, Publicacao p2) {
+		        int alphaCompare;
+		        alphaCompare = p1.getQualis().compareTo(p2.getQualis());
+		        if(alphaCompare == 0) {
+		        	alphaCompare = (-1) * ((Integer) p1.getAno()).compareTo((Integer) p2.getAno());
+		        	if(alphaCompare == 0) {
+		        		alphaCompare = p1.getVeiculo().getSigla().compareTo(p2.getVeiculo().getSigla());
+		        		if(alphaCompare == 0) {
+		        			alphaCompare = p1.getTitulo().compareTo(p2.getTitulo());
+		        		}
+		        	}
+		        }
+		        return alphaCompare;
+		    }
+		});
+		
+		for(Publicacao aux : this.publicacoes) {
+			String[] line = new String[7];
+			
+			line[0] = Objects.toString(aux.getAno());
+			
+			line[1] = aux.getVeiculo().getSigla();
+			
+			line[2] = aux.getVeiculo().getNome();
+			
+			line[3] = aux.getQualis();
+			
+			line[4] = formater.format(aux.getVeiculo().getFatorDeImpacto());
+			
+			line[5] = aux.getTitulo();
+			
+			line[6] = "";
+			for(Docente auxAutor : aux.getAutores())
+				line[6] += auxAutor.getNome() + ",";
+			line[6] = line[6].substring(0, line[6].length()-1);
+			
+			content.add(line);
+		}
+		
+		CSVmanager.CSVwriter(content, "2-publicacoes.csv", ';', ',');
+	}
+	
+	public void escreveArquivoEstatisticas() throws ErroDeIO, IOException {
+		ArrayList<String[]> content = new ArrayList<String[]>();
+		content.add(new String[] {"Qualis", "Qtd. Artigos", "Media Artigos / Docente"});
+		DecimalFormat formater = new DecimalFormat("0.00");
+		
+		for(String qualis : PontuadorPPGI.qualisRef) {
+			String[] line = new String[3];
+			
+			line[0] = qualis;
+			
+			ArrayList<Publicacao> publicacoesQualis = this.publicacoesPorQualis(qualis);
+			line[1] = Objects.toString(publicacoesQualis.size());
+			
+			double mediaAutores = 0.0;
+			for(Publicacao aux : publicacoesQualis)
+				mediaAutores += 1.0/(aux.getAutores().size());
+			line[2] = formater.format(mediaAutores);
+			
+			content.add(line);
+		}
+		
+		CSVmanager.CSVwriter(content, "3-estatisticas.csv", ';', ',');
 	}
 	
 }

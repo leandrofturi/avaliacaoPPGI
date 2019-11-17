@@ -6,7 +6,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-class Docente implements Comparable<Docente> {
+class Docente {
 	
 	private Long codigo;
 	private String nome;
@@ -82,11 +82,6 @@ class Docente implements Comparable<Docente> {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		return "Docente [codigo=" + codigo + ", nome=" + nome + ", dataDeNascimento=" + formatter.format(dataNascimento) + ", dataDeIngresso="
 				+ formatter.format(dataIngresso) + "]";
-	}
-	
-	@Override
-	public int compareTo(Docente docente) {
-	  return this.nome.compareTo(docente.nome);
 	}
 	
 }

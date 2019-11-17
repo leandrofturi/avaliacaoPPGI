@@ -14,7 +14,13 @@ public class PontuadorPPGI {
 	private int qtdAnosAConsiderar;
 	private int pontuacaoMinRecredenciamento;
 	
-	private static String[] qualisRef = {"A1","A2","B1","B2","B3","B4","C"};
+	public final static String[] qualisRef = {"A1","A2","B1","B2","B3","B4","B5","C"};
+	
+	public static boolean containsQualis(String qualis) {
+		for(String aux : PontuadorPPGI.qualisRef)
+			if(aux.equals(qualis)) return true;
+		return false;
+	}
 	
 	public PontuadorPPGI(Date dataInicio, Date dataFim, double multiplicador, int qtdAnosAConsiderar, int pontuacaoMinRecredenciamento) {
 		super();

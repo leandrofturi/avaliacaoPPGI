@@ -50,8 +50,8 @@ abstract class Publicacao {
 		this.titulo = titulo;
 	}
 	
-	public Docente getAutor(Long codigo) {
-		return null;
+	public ArrayList<Docente> getAutores() {
+		return this.autores;
 	}
 	
 	public void addAutor(Docente autor) {
