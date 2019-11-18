@@ -6,14 +6,14 @@ public class CodSiglaNaoDefinido extends Exception {
 	private String titulo;
 	private String sigla;
 
+	private static final long serialVersionUID = 1L;
+	
 	public CodSiglaNaoDefinido(String objeto, String titulo, String sigla) {
 		super();
 		this.objeto = objeto;
 		this.titulo = titulo;
 		this.sigla = sigla;
 	}
-
-	private static final long serialVersionUID = 1L;
 
 	@Override
 	public String getMessage() {		

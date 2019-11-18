@@ -1,6 +1,7 @@
 package avaliacaoPPGI;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,7 +18,7 @@ import exceptions.*;
 import utils.CSVmanager;
 import utils.PairList;
 
-public class PPGI {
+public class PPGI implements Serializable {
 	
 	private ArrayList<Docente> docentes = new ArrayList<Docente>();
 	private Docente coordenador = null;
@@ -25,7 +26,9 @@ public class PPGI {
 	private ArrayList<Publicacao> publicacoes = new ArrayList<Publicacao>();
 	private ArrayList<PontuadorPPGI> pontuadores = new ArrayList<PontuadorPPGI>();
 	
-	protected Docente getDocente(Long codigo) {
+	private static final long serialVersionUID = 1L;
+
+	private Docente getDocente(Long codigo) {
 		for(Docente aux : this.docentes) {
 			if(aux.getCodigo().equals(codigo))
 				return aux;
@@ -33,7 +36,7 @@ public class PPGI {
 		return null;
 	}
 	
-	protected void addDocente(Docente docente) {
+	private void addDocente(Docente docente) {
 		if(!this.docentes.contains(docente))
 			this.docentes.add(docente);
 	}
@@ -43,19 +46,11 @@ public class PPGI {
 			System.out.println(aux);
 	}
 	
-	protected Docente getCoordenador() {
-		return coordenador;
-	}
-
-	protected void setCoordenador(Docente coordenador) {
-		this.coordenador = coordenador;
-	}
-	
 	public void imprimeCoordenador() {
 		System.out.println(this.coordenador);
 	}
 	
-	protected Veiculo getVeiculo(String sigla) {
+	private Veiculo getVeiculo(String sigla) {
 		for(Veiculo aux : this.veiculos) {
 			if(aux.getSigla().equals(sigla))
 				return aux;
@@ -63,7 +58,7 @@ public class PPGI {
 		return null;
 	}
 	
-	protected void addVeiculo(Veiculo veiculo) {
+	private void addVeiculo(Veiculo veiculo) {
 		if(!this.veiculos.contains(veiculo))
 			this.veiculos.add(veiculo);
 	}
@@ -73,7 +68,7 @@ public class PPGI {
 			System.out.println(aux);
 	}
 	
-	protected void addPublicacao(Publicacao publicacao) {
+	private void addPublicacao(Publicacao publicacao) {
 		if(!this.publicacoes.contains(publicacao))
 			this.publicacoes.add(publicacao);
 	}
@@ -83,7 +78,7 @@ public class PPGI {
 			System.out.println(aux);
 	}
 	
-	protected ArrayList<Publicacao> publicacoesPorDocente(Docente docente) {
+	private ArrayList<Publicacao> publicacoesPorDocente(Docente docente) {
 
 		ArrayList<Publicacao> publicacoesDocente = new ArrayList<Publicacao>();
 		for(Publicacao aux : this.publicacoes) {
@@ -93,7 +88,7 @@ public class PPGI {
 		return publicacoesDocente;
 	}
 	
-	protected ArrayList<Publicacao> publicacoesPorQualis(String qualis) {
+	private ArrayList<Publicacao> publicacoesPorQualis(String qualis) {
 		
 		ArrayList<Publicacao> publicacoesQualis = new ArrayList<Publicacao>();
 		for(Publicacao aux : this.publicacoes) {
@@ -448,7 +443,8 @@ public class PPGI {
 			content.add(line);
 		}
 		
-		CSVmanager.CSVwriter(content, "1-recredenciamento.csv", ';', ',');
+		CSVmanager.CSVwriter(content, "data/1-recredenciamento.csv", ';', ',');
+		System.out.printf("Recredenciamento foi salvo em data/1-recredenciamento.csv" + '\n');
 	}
 	
 	public void escreveArquivoPublicacoes() throws ErroDeIO, IOException {
@@ -497,7 +493,8 @@ public class PPGI {
 			content.add(line);
 		}
 		
-		CSVmanager.CSVwriter(content, "2-publicacoes.csv", ';', ',');
+		CSVmanager.CSVwriter(content, "data/2-publicacoes.csv", ';', ',');
+		System.out.printf("Publicacoes foram salvas em data/2-publicacoes.csv" + '\n');
 	}
 	
 	public void escreveArquivoEstatisticas() throws ErroDeIO, IOException {
@@ -521,7 +518,51 @@ public class PPGI {
 			content.add(line);
 		}
 		
-		CSVmanager.CSVwriter(content, "3-estatisticas.csv", ';', ',');
+		CSVmanager.CSVwriter(content, "data/3-estatisticas.csv", ';', ',');
+		System.out.printf("Estatisticas foram salvas em data/3-estatisticas.csv" + '\n');
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PPGI other = (PPGI) obj;
+		if (coordenador == null) {
+			if (other.coordenador != null)
+				return false;
+		} else if (!coordenador.equals(other.coordenador))
+			return false;
+		if (docentes == null) {
+			if (other.docentes != null)
+				return false;
+		} else if (!docentes.equals(other.docentes))
+			return false;
+		if (pontuadores == null) {
+			if (other.pontuadores != null)
+				return false;
+		} else if (!pontuadores.equals(other.pontuadores))
+			return false;
+		if (publicacoes == null) {
+			if (other.publicacoes != null)
+				return false;
+		} else if (!publicacoes.equals(other.publicacoes))
+			return false;
+		if (veiculos == null) {
+			if (other.veiculos != null)
+				return false;
+		} else if (!veiculos.equals(other.veiculos))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "PPGI [docentes=" + docentes + ", coordenador=" + coordenador + ", veiculos=" + veiculos
+				+ ", publicacoes=" + publicacoes + ", pontuadores=" + pontuadores + "]";
 	}
 	
 }

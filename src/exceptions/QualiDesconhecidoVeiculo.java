@@ -5,6 +5,8 @@ public class QualiDesconhecidoVeiculo extends Exception {
 	private String qualis = null;
 	private String sigla;
 	private String ano;
+	
+	private static final long serialVersionUID = 1L;
 
 	public QualiDesconhecidoVeiculo(String qualis, String sigla, String ano) {
 		super();
@@ -12,8 +14,6 @@ public class QualiDesconhecidoVeiculo extends Exception {
 		this.sigla = sigla;
 		this.ano = ano;
 	}
-
-	private static final long serialVersionUID = 1L;
 
 	@Override
 	public String getMessage() {

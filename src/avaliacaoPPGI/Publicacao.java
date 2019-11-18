@@ -1,8 +1,9 @@
 package avaliacaoPPGI;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-abstract class Publicacao {
+abstract class Publicacao implements Serializable {
 
 	protected int ano;
 	protected Veiculo veiculo;
@@ -10,6 +11,8 @@ abstract class Publicacao {
 	protected ArrayList<Docente> autores = new ArrayList<Docente>();
 	protected int paginaInicial;
 	protected int paginaFinal;
+	
+	private static final long serialVersionUID = -8591476662637344735L;
 
 	public Publicacao(int ano, Veiculo veiculo, String titulo, ArrayList<Docente> autores, int paginaInicial,
 			int paginaFinal) {
@@ -77,6 +80,39 @@ abstract class Publicacao {
 	
 	public void setPaginaFinal(int paginaFinal) {
 		this.paginaFinal = paginaFinal;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Publicacao other = (Publicacao) obj;
+		if (ano != other.ano)
+			return false;
+		if (autores == null) {
+			if (other.autores != null)
+				return false;
+		} else if (!autores.equals(other.autores))
+			return false;
+		if (paginaFinal != other.paginaFinal)
+			return false;
+		if (paginaInicial != other.paginaInicial)
+			return false;
+		if (titulo == null) {
+			if (other.titulo != null)
+				return false;
+		} else if (!titulo.equals(other.titulo))
+			return false;
+		if (veiculo == null) {
+			if (other.veiculo != null)
+				return false;
+		} else if (!veiculo.equals(other.veiculo))
+			return false;
+		return true;
 	}
 
 	@Override

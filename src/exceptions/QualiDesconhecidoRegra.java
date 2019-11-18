@@ -4,14 +4,14 @@ public class QualiDesconhecidoRegra extends Exception {
 	
 	private String qualis = null;
 	private String data;
+	
+	private static final long serialVersionUID = 1L;
 
 	public QualiDesconhecidoRegra(String qualis, String data) {
 		super();
 		this.qualis = qualis;
 		this.data = data;
 	}
-
-	private static final long serialVersionUID = 1L;
 
 	@Override
 	public String getMessage() {

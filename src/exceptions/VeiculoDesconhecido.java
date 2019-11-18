@@ -4,14 +4,14 @@ public class VeiculoDesconhecido extends Exception {
 	
 	private String tipo = null;
 	private String sigla;
+	
+	private static final long serialVersionUID = 1L;
 
 	public VeiculoDesconhecido(String tipo, String sigla) {
 		super();
 		this.tipo = tipo;
 		this.sigla = sigla;
 	}
-
-	private static final long serialVersionUID = 1L;
 
 	@Override
 	public String getMessage() {

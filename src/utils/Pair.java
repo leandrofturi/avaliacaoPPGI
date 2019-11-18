@@ -1,9 +1,13 @@
 package utils;
 
-public class Pair<F, S>
-{
+import java.io.Serializable;
+
+public class Pair<F, S> implements Serializable {
+	
 	private F first;
 	private S second;
+	
+	private static final long serialVersionUID = 1L;
 
     public Pair(F first, S second) {
         this.first = first;

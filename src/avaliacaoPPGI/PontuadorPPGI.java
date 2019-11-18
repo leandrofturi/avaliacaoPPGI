@@ -1,11 +1,12 @@
 package avaliacaoPPGI;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import utils.PairList;
 
-public class PontuadorPPGI {
+public class PontuadorPPGI implements Serializable {
 
 	private Date dataInicio;
 	private Date dataFim;
@@ -13,6 +14,8 @@ public class PontuadorPPGI {
 	private double multiplicador;
 	private int qtdAnosAConsiderar;
 	private int pontuacaoMinRecredenciamento;
+	
+	private static final long serialVersionUID = 1L;
 	
 	public final static String[] qualisRef = {"A1","A2","B1","B2","B3","B4","B5","C"};
 	
@@ -79,6 +82,39 @@ public class PontuadorPPGI {
 
 	public int getQtdAnosAConsiderar() {
 		return qtdAnosAConsiderar;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PontuadorPPGI other = (PontuadorPPGI) obj;
+		if (dataFim == null) {
+			if (other.dataFim != null)
+				return false;
+		} else if (!dataFim.equals(other.dataFim))
+			return false;
+		if (dataInicio == null) {
+			if (other.dataInicio != null)
+				return false;
+		} else if (!dataInicio.equals(other.dataInicio))
+			return false;
+		if (Double.doubleToLongBits(multiplicador) != Double.doubleToLongBits(other.multiplicador))
+			return false;
+		if (pontuacaoMinRecredenciamento != other.pontuacaoMinRecredenciamento)
+			return false;
+		if (qtdAnosAConsiderar != other.qtdAnosAConsiderar)
+			return false;
+		if (qualis == null) {
+			if (other.qualis != null)
+				return false;
+		} else if (!qualis.equals(other.qualis))
+			return false;
+		return true;
 	}
 
 	@Override

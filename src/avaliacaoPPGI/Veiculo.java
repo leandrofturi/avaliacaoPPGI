@@ -1,14 +1,18 @@
 package avaliacaoPPGI;
 
+import java.io.Serializable;
+
 import utils.Pair;
 import utils.PairList;
 
-abstract class Veiculo {
+abstract class Veiculo implements Serializable {
 	
 	private String sigla;
 	private String nome;
 	private float fatorDeImpacto;
 	private PairList<Integer, String> qualis = new PairList<Integer, String>();
+	
+	private static final long serialVersionUID = 1L;
 	
 	public Veiculo(String sigla, String nome, float fatorDeImpacto) {
 		super();
@@ -70,6 +74,12 @@ abstract class Veiculo {
 		} else if (!sigla.equals(other.sigla))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Veiculo [sigla=" + sigla + ", nome=" + nome + ", fatorDeImpacto=" + fatorDeImpacto + ", qualis="
+				+ qualis + "]";
 	}
 	
 }

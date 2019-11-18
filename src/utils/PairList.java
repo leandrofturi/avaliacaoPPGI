@@ -1,10 +1,14 @@
 package utils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class PairList<F, S> implements Iterable<Pair<F, S>> {
+public class PairList<F, S> implements Iterable<Pair<F, S>>, Serializable {
+	
 	private ArrayList<Pair<F, S>> list = new ArrayList<Pair<F, S>>();
+	
+	private static final long serialVersionUID = 1L;
 	
 	public PairList() { }
 	
@@ -82,7 +86,20 @@ public class PairList<F, S> implements Iterable<Pair<F, S>> {
 	public Pair<F, S> get(int i) {
 		return this.list.get(i);
 	}
-	
+
+	public boolean equals(PairList<F, S> obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (list == null) {
+			if (obj.list != null)
+				return false;
+		} else if (!list.equals(obj.list))
+			return false;
+		return true;
+	}
+
 	@Override
 	public String toString() {
 		return "PairList [" + list + "]";

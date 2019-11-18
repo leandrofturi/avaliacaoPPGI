@@ -1,17 +1,20 @@
 package avaliacaoPPGI;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-class Docente {
+class Docente implements Serializable {
 	
 	private Long codigo;
 	private String nome;
 	private Date dataNascimento;
 	private Date dataIngresso;
+	
+	private static final long serialVersionUID = 1L;
 	
 	public Docente(Long codigo, String nome, Date dataNascimento, Date dataIngresso) {
 		super();

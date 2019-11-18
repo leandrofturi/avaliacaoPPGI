@@ -7,6 +7,8 @@ class PublicacaoPeriodico extends Publicacao {
 	private int numero;
 	private int volume;
 	
+	private static final long serialVersionUID = 1L;
+	
 	public PublicacaoPeriodico(int ano, Veiculo veiculo, String titulo, ArrayList<Docente> autores, 
 			int numero, int volume, int paginaInicial, int paginaFinal) {
 		super(ano, veiculo, titulo, autores, paginaInicial, paginaFinal);

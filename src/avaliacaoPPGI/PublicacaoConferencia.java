@@ -7,6 +7,8 @@ class PublicacaoConferencia extends Publicacao {
 	private int numero;
 	private String localConferencia;
 	
+	private static final long serialVersionUID = 1L;
+	
 	public PublicacaoConferencia(int ano, Veiculo veiculo, String titulo, ArrayList<Docente> autores, 
 			int numero, String localConferencia, int paginaInicial, int paginaFinal) {
 		super(ano, veiculo, titulo, autores, paginaInicial, paginaFinal);

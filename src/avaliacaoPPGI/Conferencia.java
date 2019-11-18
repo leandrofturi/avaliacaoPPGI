@@ -2,6 +2,8 @@ package avaliacaoPPGI;
 
 class Conferencia extends Veiculo {
 
+	private static final long serialVersionUID = 1L;
+
 	public Conferencia(String sigla, String nome, float fatorDeImpacto) {
 		super(sigla, nome, fatorDeImpacto);
 	}

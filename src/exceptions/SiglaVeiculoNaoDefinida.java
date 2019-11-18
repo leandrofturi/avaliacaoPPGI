@@ -4,14 +4,14 @@ public class SiglaVeiculoNaoDefinida extends Exception {
 	
 	String ano = null;
 	String sigla;
+	
+	private static final long serialVersionUID = 1L;
 
 	public SiglaVeiculoNaoDefinida(String ano, String sigla) {
 		super();
 		this.ano = ano;
 		this.sigla = sigla;
 	}
-
-	private static final long serialVersionUID = 1L;
 
 	@Override
 	public String getMessage() {

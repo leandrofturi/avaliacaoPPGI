@@ -5,13 +5,13 @@ public class CodigoRepetido extends Exception {
 	private String objeto = null;
 	private String codigo;
 
+	private static final long serialVersionUID = 1L;
+	
 	public CodigoRepetido(String objeto, String codigo) {
 		super();
 		this.objeto = objeto;
 		this.codigo = codigo;
 	}
-
-	private static final long serialVersionUID = 1L;
 	
 	@Override
 	public String getMessage() {
