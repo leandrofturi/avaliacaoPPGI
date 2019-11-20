@@ -13,6 +13,15 @@ public class Serialize {
 
 	public static void serializar(Object obj) throws ErroDeIO {
 		
+		File dirData = new File("data");
+		if(!dirData.exists()) {
+			try {
+				dirData.mkdir();
+		    } catch(SecurityException se) {
+		        se.getMessage();
+		    }
+		}
+		
 		try {
 			File dir = new File("data/tmp");
 			if(!dir.exists()) {

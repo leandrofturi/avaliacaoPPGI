@@ -46,6 +46,15 @@ public class CSVmanager {
 		
 		File file = new File(path);
 		
+		File dir = new File("data");
+		if(!dir.exists()) {
+			try {
+				dir.mkdir();
+		    } catch(SecurityException se) {
+		        se.getMessage();
+		    }
+		}
+		
 		if(!file.exists()){
 			file.createNewFile();
 		}

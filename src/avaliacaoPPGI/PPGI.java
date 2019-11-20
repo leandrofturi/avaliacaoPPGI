@@ -180,7 +180,7 @@ public class PPGI implements Serializable {
 				this.coordenador = docente;
 			}
 		}
-		
+		System.out.printf(path + " carregado" + '\n');
 	}
 	
 	public void carregaArquivoVeiculos(String path) throws IOException, ErroDeFormatacao, ErroDeIO, CodigoRepetido, VeiculoDesconhecido {
@@ -218,6 +218,7 @@ public class PPGI implements Serializable {
 				throw new VeiculoDesconhecido(aux[0].trim(), aux[2].trim());
 			}
 		}
+		System.out.printf(path + " carregado" + '\n');
 	}
 	
 	public void carregaArquivoPublicacoes(String path) throws IOException, ErroDeFormatacao, ErroDeIO, CodSiglaNaoDefinido, CodigoRepetido, SiglaVeiculoNaoDefinida {
@@ -306,7 +307,7 @@ public class PPGI implements Serializable {
 				throw new SiglaVeiculoNaoDefinida(aux[0].trim(), aux[1].trim());
 			}
 		}
-
+		System.out.printf(path + " carregado" + '\n');
 	}
 	
 	public void carregaArquivoQualificacoes(String path) throws IOException, ErroDeFormatacao, ErroDeIO, SiglaVeiculoNaoDefinida, QualiDesconhecidoVeiculo {
@@ -335,6 +336,7 @@ public class PPGI implements Serializable {
 			}	
 			veiculo.addQualis(ano, qualis);
 		}
+		System.out.printf(path + " carregado" + '\n');
 	}
 	
 	public void carregaArquivoPontuacoes(String path) throws IOException, ErroDeIO, ErroDeFormatacao, QualiDesconhecidoRegra {
@@ -408,6 +410,7 @@ public class PPGI implements Serializable {
 			}
 			this.pontuadores.add(pontuador);
 		}
+		System.out.printf(path + " carregado" + '\n');
 	}
 	
 	public void escreveArquivoRecredenciamento(int ano) throws ErroDeIO, IOException {

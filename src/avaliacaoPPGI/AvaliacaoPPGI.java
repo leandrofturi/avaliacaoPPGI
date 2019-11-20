@@ -9,6 +9,27 @@ public class AvaliacaoPPGI {
 
 	public static void main(String[] args) throws IOException, ErroDeFormatacao, ErroDeIO, CodigoRepetido, VeiculoDesconhecido, SiglaVeiculoNaoDefinida, CodSiglaNaoDefinido, QualiDesconhecidoVeiculo, QualiDesconhecidoRegra, ClassNotFoundException, ClasseNaoEncontrada {
 		
+		System.out.println("─▄▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▄");
+		System.out.println("█░░░█░░░░░░░░░░▄▄░██░█");
+		System.out.println("█░▀▀█▀▀░▄▀░▄▀░░▀▀░▄▄░█");
+		System.out.println("█░░░▀░░░▄▄▄▄▄░░██░▀▀░█");
+		System.out.println("─▀▄▄▄▄▄▀─────▀▄▄▄▄▄▄▀");
+		System.out.println("Bem-vindo ao sistema do PPGI!" + '\n');
+		
+		PPGI sistema = new PPGI();
+		sistema.carregaArquivoDocentes("entradas/script-java/testes/01/in/docentes.csv");
+		sistema.carregaArquivoVeiculos("entradas/script-java/testes/01/in/veiculos.csv");
+		sistema.carregaArquivoQualificacoes("entradas/script-java/testes/01/in/qualis.csv");
+		sistema.carregaArquivoPublicacoes("entradas/script-java/testes/01/in/publicacoes.csv");
+		sistema.carregaArquivoPontuacoes("entradas/script-java/testes/01/in/regras.csv");
+		
+		sistema.escreveArquivoRecredenciamento(2016);
+		sistema.escreveArquivoPublicacoes();
+		sistema.escreveArquivoEstatisticas();
+		
+		Serialize.serializar(sistema);
+		
+		/*
 		PPGI sistema = new PPGI();
 		
 		String flag = null;
@@ -81,7 +102,7 @@ public class AvaliacaoPPGI {
 			sistema.escreveArquivoEstatisticas();
 		}
 		else throw new ErroDeIO();
-
+	*/
 	}
 
 }
