@@ -8,11 +8,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import exceptions.ErroDeIO;
-
 public class CSVmanager {
 
-	public static ArrayList<String[]> CSVread(String path, char sep, boolean header) throws ErroDeIO {
+	public static ArrayList<String[]> CSVread(String path, char sep, boolean header) throws IOException {
 		
 		int colSize = 0;
 		try(BufferedReader br = new BufferedReader(new FileReader(path))) {
@@ -38,11 +36,11 @@ public class CSVmanager {
 			return list;
 		}
 		catch (IOException e){
-			throw new ErroDeIO();
+			throw e;
 		}
 	}
 	
-	public static void CSVwriter(ArrayList<String[]> content, String path, char sep, char dec) throws ErroDeIO, IOException {
+	public static void CSVwriter(ArrayList<String[]> content, String path, char sep, char dec) throws IOException {
 		
 		File file = new File(path);
 		
@@ -51,7 +49,8 @@ public class CSVmanager {
 			try {
 				dir.mkdir();
 		    } catch(SecurityException se) {
-		        se.getMessage();
+		    	se.getMessage();
+		        throw se;
 		    }
 		}
 		
@@ -71,8 +70,8 @@ public class CSVmanager {
 			bw.close();
 		}
 		catch (IOException e){
-			throw new ErroDeIO();
+			throw e;
 		}
 	}
-	
+
 }

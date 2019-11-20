@@ -1,20 +1,8 @@
 package avaliacaoPPGI;
 
-import java.io.IOException;
-
-import exceptions.*;
-import serialize.Serialize;
-
 public class AvaliacaoPPGI {
 
-	public static void main(String[] args) throws IOException, ErroDeFormatacao, ErroDeIO, CodigoRepetido, VeiculoDesconhecido, SiglaVeiculoNaoDefinida, CodSiglaNaoDefinido, QualiDesconhecidoVeiculo, QualiDesconhecidoRegra, ClassNotFoundException, ClasseNaoEncontrada {
-		
-		System.out.println("─▄▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▄");
-		System.out.println("█░░░█░░░░░░░░░░▄▄░██░█");
-		System.out.println("█░▀▀█▀▀░▄▀░▄▀░░▀▀░▄▄░█");
-		System.out.println("█░░░▀░░░▄▄▄▄▄░░██░▀▀░█");
-		System.out.println("─▀▄▄▄▄▄▀─────▀▄▄▄▄▄▄▀");
-		System.out.println("Bem-vindo ao sistema do PPGI!" + '\n');
+	public static void main(String[] args) {
 		
 		PPGI sistema = new PPGI();
 		sistema.carregaArquivoDocentes("entradas/script-java/testes/01/in/docentes.csv");
@@ -27,7 +15,9 @@ public class AvaliacaoPPGI {
 		sistema.escreveArquivoPublicacoes();
 		sistema.escreveArquivoEstatisticas();
 		
-		Serialize.serializar(sistema);
+		PPGI.serializar(sistema);
+		PPGI ppgi = PPGI.desserializar();
+		ppgi.imprimeCoordenador();
 		
 		/*
 		PPGI sistema = new PPGI();
