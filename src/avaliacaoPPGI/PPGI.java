@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Objects;
 
+import exceptions.*;
 import serialize.Serialize;
 import utils.CSVmanager;
 import utils.PairList;
@@ -133,7 +134,7 @@ public class PPGI implements Serializable {
 			System.out.println(aux);
 	}
 	
-	public void carregaArquivoDocentes(String path) {
+	public void carregaArquivoDocentes(String path) throws ErroDeIO, ErroDeFormatacao, CodigoRepetido {
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		
@@ -148,8 +149,7 @@ public class PPGI implements Serializable {
 				try {
 					codigo = Long.parseUnsignedLong(aux[0].trim());
 				} catch (NumberFormatException e) {
-					System.err.println("Erro de formatação.");
-					return;
+					throw new ErroDeFormatacao();
 				}
 				
 				nome = aux[1].trim();
@@ -157,40 +157,35 @@ public class PPGI implements Serializable {
 				try {
 			        dataNascimento = formatter.parse(aux[2].trim());
 			    } catch (ParseException e) {
-			    	System.err.println("Erro de formatação.");
-					return;
+			    	throw new ErroDeFormatacao();
 			    }
 				
 				try {
 			        dataIngresso = formatter.parse(aux[3].trim());
 			    } catch (ParseException e) {
-			    	System.err.println("Erro de formatação.");
-					return;
+			    	throw new ErroDeFormatacao();
 			    }
 				
 				Docente docente = new Docente(codigo, nome, dataNascimento, dataIngresso);
 				if(this.docentes.contains(docente)) {
-					System.out.println("Código repetido para docente: " + aux[0].trim() + ".");
-					return;
+					throw new CodigoRepetido("docente", aux[0].trim());
 				}
 				this.docentes.add(docente);
 				
 				if((aux[4].trim().equals("X")) || (aux[4].trim().equals("x"))) {
 					if(this.coordenador != null) {
-						System.out.println("Código repetido para coordenador: " + aux[0].trim() + ".");
-						return;
+						throw new CodigoRepetido("docente", aux[0].trim());
 					}
 					this.coordenador = docente;
 				}
 			}
 		} catch (IOException e) {
-			System.err.println("Erro de I/O");
-			return;
+			throw new ErroDeIO();
 		}
 		System.out.printf(path + " carregado!" + '\n');
 	}
 	
-	public void carregaArquivoVeiculos(String path) {
+	public void carregaArquivoVeiculos(String path) throws ErroDeIO, VeiculoDesconhecido, CodigoRepetido, ErroDeFormatacao {
 
 		try {
 			for(String[] aux : CSVmanager.CSVread(path, ';', true)) {
@@ -206,40 +201,35 @@ public class PPGI implements Serializable {
 				try {
 					fatorDeImpacto = Float.parseFloat(aux[3].replace(',', '.').trim());
 				} catch (NumberFormatException e) {
-			    	System.err.println("Erro de formatação.");
-					return;
+					throw new ErroDeFormatacao();
 				}
 				
 				if(aux[2].trim().equals("P")) {
 					String ISSN = aux[4].trim();
 					Periodico periodico = new Periodico(sigla, nome, fatorDeImpacto, ISSN);
 					if(this.veiculos.contains(periodico)) {
-						System.out.println("Código repetido para veículo: " + aux[0].trim() + ".");
-						return;
+						throw new CodigoRepetido("veículo", aux[0].trim());
 					}
 					this.veiculos.add(periodico);
 				}
 				else if(aux[2].trim().equals("C")) {
 					Conferencia conferencia = new Conferencia(sigla, nome, fatorDeImpacto);
 					if(this.veiculos.contains(conferencia)) {
-						System.out.println("Código repetido para veículo: " + aux[0].trim() + ".");
-						return;
+						throw new CodigoRepetido("veículo", aux[0].trim());
 					}
 					this.veiculos.add(conferencia);
 				}
 				else {
-					System.out.println("Tipo de veículo desconhecido para veículo " + aux[0].trim() + ": " + aux[2].trim() + ".");
-					return;
+					throw new VeiculoDesconhecido(aux[2].trim(), aux[0].trim());
 				}
 			}
 		} catch (IOException e) {
-			System.err.println("Erro de I/O");
-			return;
+			throw new ErroDeIO();
 		}
 		System.out.printf(path + " carregado!" + '\n');
 	}
 	
-	public void carregaArquivoPublicacoes(String path) {
+	public void carregaArquivoPublicacoes(String path) throws ErroDeIO, VeiculoDesconhecido, Desconhecido, ErroDeFormatacao, CodNaoDefinido, CodigoRepetido {
 		
 		try {
 			for(String[] aux : CSVmanager.CSVread(path, ';', true)) {
@@ -257,15 +247,13 @@ public class PPGI implements Serializable {
 				try {
 					ano = Integer.parseInt(aux[0].trim());
 				} catch (NumberFormatException e) {
-			    	System.err.println("Erro de formatação.");
-					return;
+					throw new ErroDeFormatacao();
 				}
 				
 				siglaVeiculo = aux[1].trim();
 				veiculo = this.getVeiculo(siglaVeiculo);
 				if(veiculo == null) {
-					System.err.println("Sigla de veículo não definida usada na publicação \"" + aux[2].trim() + "\": " + aux[1].trim() + ".");
-					return;
+					throw new CodNaoDefinido("veículo", aux[2].trim(), aux[1].trim());
 				}
 				
 				titulo = aux[2].trim();
@@ -274,17 +262,14 @@ public class PPGI implements Serializable {
 					try {
 						codAutor = Long.parseUnsignedLong(autorAux.trim());
 					} catch (NumberFormatException e) {
-			        	System.err.println("Erro de formatação.");
-						return;
+						throw new ErroDeFormatacao();
 					}
 					autor = this.getDocente(codAutor);
 					if(autor == null) {
-						System.err.println("Código de docente não definido usado na publicação \"" + aux[2].trim() + "\": " + autorAux + ".");
-						return;
+						throw new CodNaoDefinido("docente", aux[2].trim(), autorAux);
 					}
 					if(autores.contains(autor)) {
-						System.err.println("Código repetido para docente: " + autorAux + ".");
-						return;
+						throw new CodigoRepetido("docente", autorAux);
 					}
 					autores.add(autor);
 				}
@@ -292,22 +277,19 @@ public class PPGI implements Serializable {
 				try {
 					numero = Integer.parseInt(aux[4].trim());
 				} catch (NumberFormatException e) {
-			    	System.err.println("Erro de formatação.");
-					return;
+					throw new ErroDeFormatacao();
 				}
 				
 				try {
 					paginaInicial = Integer.parseInt(aux[7].trim());
 				} catch (NumberFormatException e) {
-			    	System.err.println("Erro de formatação.");
-					return;
+					throw new ErroDeFormatacao();
 				}
 				
 				try {
 					paginaFinal = Integer.parseInt(aux[8].trim());
 				} catch (NumberFormatException e) {
-			    	System.err.println("Erro de formatação.");
-					return;
+					throw new ErroDeFormatacao();
 				}
 				
 				if(veiculo instanceof Periodico) {
@@ -315,15 +297,13 @@ public class PPGI implements Serializable {
 					try {
 						volume = Integer.parseInt(aux[5].trim());
 					} catch (NumberFormatException e) {
-			        	System.err.println("Erro de formatação.");
-						return;
+						throw new ErroDeFormatacao();
 					}
 					
 					Publicacao publicacao = new PublicacaoPeriodico(ano, veiculo, titulo, autores,
 							numero, volume, paginaInicial, paginaFinal);
 					if(this.publicacoes.contains(publicacao)) {
-						System.out.println("Publicação repetida: " + aux[2].trim() + ".");
-						return;
+						throw new Desconhecido();
 					}
 					this.publicacoes.add(publicacao);
 				}
@@ -335,25 +315,22 @@ public class PPGI implements Serializable {
 					Publicacao publicacao = new PublicacaoConferencia(ano, veiculo, titulo, autores,
 							numero, localConferencia, paginaInicial, paginaFinal);
 					if(this.publicacoes.contains(publicacao)) {
-						System.out.println("Publicação repetida: " + aux[2].trim() + ".");
-						return;
+						throw new Desconhecido();
 					}
 					this.publicacoes.add(publicacao);
 				}
 				
 				else {
-					System.err.println("Sigla de veículo não definida usada na publicação \"" + aux[2].trim() + "\": " + aux[1].trim() + ".");
-					return;
+					throw new VeiculoDesconhecido(veiculo.getClass().toString(), aux[1].trim());
 				}
 			}
 		} catch (IOException e) {
-			System.err.println("Erro de I/O");
-			return;
+			throw new ErroDeIO();
 		}
 		System.out.printf(path + " carregado!" + '\n');
 	}
 	
-	public void carregaArquivoQualificacoes(String path) {
+	public void carregaArquivoQualificacoes(String path) throws ErroDeIO, SiglaVeiculoNaoDefinida, QualiDesconhecidoVeiculo, ErroDeFormatacao {
 		
 		try {
 			for(String[] aux : CSVmanager.CSVread(path, ';', true)) {
@@ -365,33 +342,29 @@ public class PPGI implements Serializable {
 				try {
 					ano = Integer.parseInt(aux[0].trim());
 				} catch (NumberFormatException e) {
-			    	System.err.println("Erro de formatação.");
-					return;
+					throw new ErroDeFormatacao();
 				}
 				
 				sigla = aux[1].trim();
 				
 				qualis = aux[2].trim();
 				if(!PontuadorPPGI.containsQualis(qualis)) {
-					System.out.println("Qualis desconhecido para qualificação do veículo " + aux[1].trim() + " no ano " + aux[0].trim() + ": " + aux[2].trim() + ".");
-					return;
+					throw new QualiDesconhecidoVeiculo(aux[2].trim(), aux[1].trim(), aux[0].trim());
 				}
 				
 				Veiculo veiculo = this.getVeiculo(sigla);
 				if(veiculo == null) {
-					System.err.println("Sigla de veículo não definida usada na qualificação do ano \"" + aux[0].trim() + "\": " + aux[1].trim() + ".");
-					return;
+					throw new SiglaVeiculoNaoDefinida(aux[0].trim(), aux[1].trim());
 				}	
 				veiculo.addQualis(ano, qualis);
 			}
 		} catch (IOException e) {
-			System.err.println("Erro de I/O");
-			return;
+			throw new ErroDeIO();
 		}
 		System.out.printf(path + " carregado!" + '\n');
 	}
 	
-	public void carregaArquivoPontuacoes(String path) {
+	public void carregaArquivoPontuacoes(String path) throws ErroDeIO, Desconhecido, ErroDeFormatacao, QualiDesconhecidoRegra {
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		
@@ -408,22 +381,19 @@ public class PPGI implements Serializable {
 				try {
 					dataInicio = formatter.parse(aux[0].trim());
 			    } catch (ParseException e) {
-			    	System.err.println("Erro de formatação.");
-					return;
+			    	throw new ErroDeFormatacao();
 			    }
 				
 				try {
 					dataFim = formatter.parse(aux[1].trim());
 			    } catch (ParseException e) {
-			    	System.err.println("Erro de formatação.");
-					return;
+			    	throw new ErroDeFormatacao();
 			    }
 				
 				quali = aux[2].trim().split(",");
 				pontos = aux[3].trim().split(",");
 				if(quali.length != pontos.length) {
-			    	System.err.println("Erro de formatação.");
-					return;
+					throw new ErroDeFormatacao();
 				}
 				for(int i = 0; i < quali.length; i++) {
 					String qual;
@@ -431,15 +401,13 @@ public class PPGI implements Serializable {
 					
 					qual = quali[i].trim();
 					if(!PontuadorPPGI.containsQualis(qual)) {
-						System.err.println("Qualis desconhecido para regras de " + aux[0].trim() + ": " + quali[i].trim() + ".");
-						return;
+						throw new QualiDesconhecidoRegra(quali[i].trim(), aux[0].trim());
 					}
 						
 					try {
 						ponto = Integer.parseInt(pontos[i].trim());
 					} catch (NumberFormatException e) {
-			        	System.err.println("Erro de formatação.");
-						return;
+						throw new ErroDeFormatacao();
 					}
 					qualis.put(qual, ponto);
 				}
@@ -447,40 +415,35 @@ public class PPGI implements Serializable {
 				try {
 					multiplicador = Float.parseFloat(aux[4].replace(',', '.').trim());
 				} catch (NumberFormatException e) {
-			    	System.err.println("Erro de formatação.");
-					return;
+					throw new ErroDeFormatacao();
 				}
 				
 				try {
 					qtdAnosAConsiderar = Integer.parseInt(aux[5].trim());
 				} catch (NumberFormatException e) {
-			    	System.err.println("Erro de formatação.");
-					return;
+					throw new ErroDeFormatacao();
 				}
 				
 				try {
 					pontuacaoMinRecredenciamento = Integer.parseInt(aux[6].trim());
 				} catch (NumberFormatException e) {
-			    	System.err.println("Erro de formatação");
-					return;
+					throw new ErroDeFormatacao();
 				}
 				
 				PontuadorPPGI pontuador = new PontuadorPPGI(dataInicio, dataFim, qualis, multiplicador, qtdAnosAConsiderar, pontuacaoMinRecredenciamento);
 				
 				if(this.pontuadores.contains(pontuador)) {
-					System.err.println("Regras de pontuação repetidas.");
-					return;
+					throw new Desconhecido();
 				}
 				this.pontuadores.add(pontuador);
 			}
 		} catch (IOException e) {
-			System.err.println("Erro de I/O");
-			return;
+			throw new ErroDeIO();
 		}
 		System.out.printf(path + " carregado!" + '\n');
 	}
 	
-	public void escreveArquivoRecredenciamento(int ano) {
+	public void escreveArquivoRecredenciamento(int ano) throws ErroDeIO {
 
 		ArrayList<String[]> content = new ArrayList<String[]>();
 		content.add(new String[] {"Docente", "Pontuação", "Recredenciado?"});
@@ -519,13 +482,12 @@ public class PPGI implements Serializable {
 		try {
 			CSVmanager.CSVwriter(content, "data/1-recredenciamento.csv", ';', ',');
 		} catch (IOException e) {
-			System.err.println("Erro de I/O");
-			return;
+			throw new ErroDeIO();
 		}
 		System.out.printf("Recredenciamento foi salvo em data/1-recredenciamento.csv" + '\n');
 	}
 	
-	public void escreveArquivoPublicacoes() {
+	public void escreveArquivoPublicacoes() throws ErroDeIO {
 		
 		ArrayList<String[]> content = new ArrayList<String[]>();
 		content.add(new String[] {"Ano","Sigla Veículo","Veículo","Qualis","Fator de Impacto","Título","Docentes"});
@@ -575,13 +537,12 @@ public class PPGI implements Serializable {
 		try {
 			CSVmanager.CSVwriter(content, "data/2-publicacoes.csv", ';', ',');
 		} catch (IOException e) {
-			System.err.println("Erro de I/O");
-			return;
+			throw new ErroDeIO();
 		}
 		System.out.printf("Publicacoes foram salvas em data/2-publicacoes.csv" + '\n');
 	}
 	
-	public void escreveArquivoEstatisticas() {
+	public void escreveArquivoEstatisticas() throws ErroDeIO {
 		ArrayList<String[]> content = new ArrayList<String[]>();
 		content.add(new String[] {"Qualis","Qtd. Artigos","Média Artigos / Docente"});
 		DecimalFormat formater = new DecimalFormat("0.00");
@@ -605,33 +566,18 @@ public class PPGI implements Serializable {
 		try {
 			CSVmanager.CSVwriter(content, "data/3-estatisticas.csv", ';', ',');
 		} catch (IOException e) {
-			System.err.println("Erro de I/O");
-			return;
+			throw new ErroDeIO();
 		}
 		System.out.printf("Estatisticas foram salvas em data/3-estatisticas.csv" + '\n');
 	}
 	
-	public static void serializar(PPGI sistema) {
-		try {
-			Serialize.serializar(sistema);
-		} catch (IOException e) {
-			System.err.println("Erro de I/O");
-			return;
-		}
+	public static void serializar(PPGI sistema) throws ErroDeIO, Desconhecido {
+		Serialize.serializar(sistema);
 	}
 	
-	public static PPGI desserializar() {
-		PPGI sistema;
-		try {
-			sistema = (PPGI) Serialize.desserializar();
-			return sistema;
-		} catch (IOException e) {
-			System.err.println("Erro de I/O");
-			return null;
-		} catch (ClassNotFoundException c) {
-			c.getMessage();
-			return null;
-		}
+	public static PPGI desserializar() throws ErroDeIO, Desconhecido {
+		PPGI sistema = (PPGI) Serialize.desserializar();
+		return sistema;
 	}
 
 	@Override

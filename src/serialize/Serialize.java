@@ -7,9 +7,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import exceptions.Desconhecido;
+import exceptions.ErroDeIO;
+
 public class Serialize {
 
-	public static void serializar(Object obj) throws IOException {
+	public static void serializar(Object obj) throws ErroDeIO, Desconhecido {
 		
 		File dirData = new File("data");
 		if(!dirData.exists()) {
@@ -17,7 +20,7 @@ public class Serialize {
 				dirData.mkdir();
 		    } catch(SecurityException se) {
 		    	se.getMessage();
-		    	throw se;
+		    	throw new Desconhecido();
 		    }
 		}
 		
@@ -28,7 +31,7 @@ public class Serialize {
 					dir.mkdir();
 			    } catch(SecurityException se) {
 			    	se.getMessage();
-			    	throw se;
+			    	throw new Desconhecido();
 			    }
 			}
 			
@@ -42,11 +45,11 @@ public class Serialize {
 			fileOut.close();
 			System.out.printf("Serialização dos dados foi salvo em data/tmp/recredenciamento.dat" + '\n');
 	    } catch(IOException i) {
-	    	throw i;
+	    	throw new ErroDeIO();
 	    }
 	}
 	
-	public static Object desserializar() throws IOException, ClassNotFoundException {
+	public static Object desserializar() throws ErroDeIO, Desconhecido {
 		
 	    try {
 	    	FileInputStream fileIn = new FileInputStream("data/tmp/recredenciamento.dat");
@@ -59,9 +62,9 @@ public class Serialize {
 	    	System.out.println("Dados desserializados" + '\n');
 	    	return obj;
 	    } catch(IOException i) {
-	    	throw i;
+	    	throw new ErroDeIO();
 	    } catch(ClassNotFoundException c) {
-	    	throw c;
+	    	throw new Desconhecido();
 	    }
 	}
 	
