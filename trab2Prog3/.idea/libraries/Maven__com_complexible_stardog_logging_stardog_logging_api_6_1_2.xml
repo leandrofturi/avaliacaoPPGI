@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.complexible.stardog.logging:stardog-logging-api:6.1.2">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/complexible/stardog/logging/stardog-logging-api/6.1.2/stardog-logging-api-6.1.2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/complexible/stardog/logging/stardog-logging-api/6.1.2/stardog-logging-api-6.1.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/complexible/stardog/logging/stardog-logging-api/6.1.2/stardog-logging-api-6.1.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

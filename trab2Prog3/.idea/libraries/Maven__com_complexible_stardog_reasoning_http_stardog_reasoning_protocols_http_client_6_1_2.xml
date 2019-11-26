@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.complexible.stardog.reasoning.http:stardog-reasoning-protocols-http-client:6.1.2">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/complexible/stardog/reasoning/http/stardog-reasoning-protocols-http-client/6.1.2/stardog-reasoning-protocols-http-client-6.1.2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/complexible/stardog/reasoning/http/stardog-reasoning-protocols-http-client/6.1.2/stardog-reasoning-protocols-http-client-6.1.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/complexible/stardog/reasoning/http/stardog-reasoning-protocols-http-client/6.1.2/stardog-reasoning-protocols-http-client-6.1.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
