@@ -6,8 +6,6 @@ public class AvaliacaoPPGI {
 
 	public static void main(String[] args) {
 
-		//-d entradas/script-java/testes/01/in/docentes.csv -v entradas/script-java/testes/01/in/veiculos.csv -p entradas/script-java/testes/01/in/publicacoes.csv -q entradas/script-java/testes/01/in/qualis.csv -r entradas/script-java/testes/01/in/regras.csv -a 2017
-		
 		PPGI sistema = new PPGI();
 		
 		String flag = null;
@@ -53,6 +51,18 @@ public class AvaliacaoPPGI {
 					System.err.println(new Desconhecido().getMessage());
 				}
 			}
+		}
+		if(args[args.length-1].equals("--read-only")) {
+			if(flag == null)
+				flag = "R";
+			else
+				System.err.println(new Desconhecido().getMessage());
+		}
+		else if(args[args.length-1].equals("--write-only")) {
+			if(flag == null)
+				flag = "W";
+			else
+				System.err.println(new Desconhecido().getMessage());
 		}
 
 		if(flag == null) {

@@ -44,6 +44,7 @@ public class CSVmanager {
 		
 		File file = new File(path);
 		
+		/*
 		File dir = new File("data");
 		if(!dir.exists()) {
 			try {
@@ -53,6 +54,7 @@ public class CSVmanager {
 		        throw se;
 		    }
 		}
+		*/
 		
 		if(!file.exists()){
 			file.createNewFile();

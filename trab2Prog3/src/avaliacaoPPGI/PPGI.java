@@ -574,11 +574,11 @@ public class PPGI implements Serializable {
 	}
 	
 	public static void serializar(PPGI sistema) throws ErroDeIO, Desconhecido {
-		Serialize.serializar(sistema);
+		Serialize.serializar("recredenciamento.dat", sistema);
 	}
 	
 	public static PPGI desserializar() throws ErroDeIO, Desconhecido {
-		PPGI sistema = (PPGI) Serialize.desserializar();
+		PPGI sistema = (PPGI) Serialize.desserializar("recredenciamento.dat");
 		return sistema;
 	}
 

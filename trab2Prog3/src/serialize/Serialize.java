@@ -12,7 +12,7 @@ import exceptions.ErroDeIO;
 
 public class Serialize {
 
-	public static void serializar(Object obj) throws ErroDeIO, Desconhecido {
+	public static void serializar(String path, Object obj) throws ErroDeIO, Desconhecido {
 		
 		/*
 		File dirData = new File("data");
@@ -40,7 +40,11 @@ public class Serialize {
 			*/
 			
 			//File file = new File("data/tmp/recredenciamento.dat");
-			File file = new File("recredenciamento.dat");
+			File file = new File(path);
+			if(!file.exists()){
+				file.createNewFile();
+			}
+			
 			FileOutputStream fileOut = new FileOutputStream(file);
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
 			
@@ -54,11 +58,11 @@ public class Serialize {
 	    }
 	}
 	
-	public static Object desserializar() throws ErroDeIO, Desconhecido {
+	public static Object desserializar(String path) throws ErroDeIO, Desconhecido {
 		
 	    try {
 	    	//FileInputStream fileIn = new FileInputStream("data/tmp/recredenciamento.dat");
-	    	FileInputStream fileIn = new FileInputStream("recredenciamento.dat");
+	    	FileInputStream fileIn = new FileInputStream(path);
 	    	ObjectInputStream in = new ObjectInputStream(fileIn);
 	       
 	    	Object obj = in.readObject();
