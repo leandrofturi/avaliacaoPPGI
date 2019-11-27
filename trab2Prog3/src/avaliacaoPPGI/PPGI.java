@@ -28,6 +28,8 @@ public class PPGI implements Serializable {
 	private ArrayList<Publicacao> publicacoes = new ArrayList<Publicacao>();
 	private ArrayList<PontuadorPPGI> pontuadores = new ArrayList<PontuadorPPGI>();
 	
+	public int argumentoAno;
+	
 	private static final long serialVersionUID = 1L;
 
 	/*
