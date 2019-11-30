@@ -5,6 +5,11 @@ import exceptions.*;
 public class AvaliacaoPPGI {
 
 	public static void main(String[] args) {
+		
+		if(args.length == 0) {
+			System.err.println(new Desconhecido().getMessage());
+			return;
+		}
 
 		PPGI sistema = new PPGI();
 		
