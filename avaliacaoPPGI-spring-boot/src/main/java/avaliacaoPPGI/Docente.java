@@ -1,0 +1,91 @@
+package avaliacaoPPGI;
+
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+
+class Docente {
+	
+	private Long codigo;
+	private String nome;
+	private Date dataNascimento;
+	private Date dataIngresso;
+	
+	public Docente(Long codigo, String nome, Date dataNascimento, Date dataIngresso) {
+		super();
+		this.codigo = codigo;
+		this.nome = nome;
+		this.dataNascimento = dataNascimento;
+		this.dataIngresso = dataIngresso;
+	}
+
+	public Long getCodigo() {
+		return codigo;
+	}
+	
+	public void setCodigo(Long codigo) {
+		this.codigo = codigo;
+	}
+	
+	public String getNome() {
+		return nome;
+	}
+	
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+	
+	public Date getDataNascimento() {
+		return dataNascimento;
+	}
+	
+	public void setDataNascimento(Date dataNascimento) {
+		this.dataNascimento = dataNascimento;
+	}
+	
+	public Date getDataIngresso() {
+		return dataIngresso;
+	}
+	
+	public void setDataIngresso(Date dataIngresso) {
+		this.dataIngresso = dataIngresso;
+	}
+	
+	public long getIdade(int anoRef) {
+		return ChronoUnit.YEARS.between((this.dataNascimento).toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+			   LocalDate.of(anoRef, Month.DECEMBER, 31));
+	}
+	
+	public long getTempoDeIngresso(int anoRef) {
+		return ChronoUnit.YEARS.between((this.dataIngresso).toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+			   LocalDate.of(anoRef, Month.DECEMBER, 31));
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Docente other = (Docente) obj;
+		if (codigo == null) {
+			if (other.codigo != null)
+				return false;
+		} else if (!codigo.equals(other.codigo))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		return "Docente [codigo=" + codigo + ", nome=" + nome + ", dataDeNascimento=" + formatter.format(dataNascimento) + ", dataDeIngresso="
+				+ formatter.format(dataIngresso) + "]";
+	}
+	
+}
