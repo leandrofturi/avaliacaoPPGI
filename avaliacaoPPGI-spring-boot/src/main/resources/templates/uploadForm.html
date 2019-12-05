@@ -18,6 +18,10 @@
 		<h2 th:text="${title}"/>
 	</div>
 
+	<div th:if="${erro}">
+		<h2 th:text="${erro}"/>
+	</div>
+
 	<div th:if="${message}">
 		<h2 th:text="${message}"/>
 	</div>

@@ -22,6 +22,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import application.storage.FileSystemStorageService;
 import application.storage.StorageFileNotFoundException;
 import avaliacaoPPGI.AvaliacaoPPGI;
+import exceptions.CodNaoDefinido;
+import exceptions.CodigoRepetido;
+import exceptions.Desconhecido;
+import exceptions.ErroDeFormatacao;
+import exceptions.ErroDeIO;
+import exceptions.QualiDesconhecidoRegra;
+import exceptions.QualiDesconhecidoVeiculo;
+import exceptions.SiglaVeiculoNaoDefinida;
+import exceptions.VeiculoDesconhecido;
 
 @Controller
 public class FileUploadController {
@@ -69,19 +78,20 @@ public class FileUploadController {
 		index++;
 		if(index >= fileNames.length) {
 			
-			if(AvaliacaoPPGI.run()) {
-				redirectAttributes.addFlashAttribute("title", "Você carregou todos os arquivos necessários!");
-				redirectAttributes.addFlashAttribute("message", "Construindo relatórios...");
-			}
-			else {
+			redirectAttributes.addFlashAttribute("title", "Você carregou todos os arquivos necessários!");
+			redirectAttributes.addFlashAttribute("message", "Construindo relatórios...");
+			try {
+				AvaliacaoPPGI.run();
+			} catch (ErroDeIO | ErroDeFormatacao | CodigoRepetido | VeiculoDesconhecido | SiglaVeiculoNaoDefinida
+					| QualiDesconhecidoVeiculo | Desconhecido | CodNaoDefinido | QualiDesconhecidoRegra e) {
 				redirectAttributes.addFlashAttribute("title", "Você não carregou todos os arquivos necessários!");
 				redirectAttributes.addFlashAttribute("message", "Não terá relatórios por agora.");
+				redirectAttributes.addFlashAttribute("erro", e.getMessage());
 			}
 			
 			index = 0;
 			this.storageService.deleteIn();
 		}
-		
 		return "redirect:/";
 	}
 	

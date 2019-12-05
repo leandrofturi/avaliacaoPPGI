@@ -7,7 +7,7 @@ import utils.CSVmanager;
 
 public class AvaliacaoPPGI {
 
-	public static boolean run() {
+	public static void run() throws ErroDeIO, ErroDeFormatacao, CodigoRepetido, VeiculoDesconhecido, SiglaVeiculoNaoDefinida, QualiDesconhecidoVeiculo, Desconhecido, CodNaoDefinido, QualiDesconhecidoRegra {
 
 		PPGI sistema = new PPGI();
 		
@@ -19,23 +19,20 @@ public class AvaliacaoPPGI {
 		String pathanoRecredenciamento = "upload-dir/in/ano.csv";
 		Integer anoRecredenciamento;
 
+		sistema.carregaArquivoDocentes(pathDocentes);
+		sistema.carregaArquivoVeiculos(pathVeiculos);
+		sistema.carregaArquivoQualificacoes(pathQualificacoes);
+		sistema.carregaArquivoPublicacoes(pathPublicacoes);
+		sistema.carregaArquivoPontuacoes(pathRegras);
 		try {
-			sistema.carregaArquivoDocentes(pathDocentes);
-			sistema.carregaArquivoVeiculos(pathVeiculos);
-			sistema.carregaArquivoQualificacoes(pathQualificacoes);
-			sistema.carregaArquivoPublicacoes(pathPublicacoes);
-			sistema.carregaArquivoPontuacoes(pathRegras);
 			anoRecredenciamento = Integer.parseInt((CSVmanager.CSVread(pathanoRecredenciamento, ';', false).get(0))[0]);
+		} catch (NumberFormatException | IOException e) {
+			throw new ErroDeFormatacao();
+		}
 			
-			sistema.escreveArquivoRecredenciamento(anoRecredenciamento, "upload-dir/1-recredenciamento.csv");
-			sistema.escreveArquivoPublicacoes("upload-dir/2-publicacoes.csv");
-			sistema.escreveArquivoEstatisticas("upload-dir/3-estatisticas.csv");
-		}
-		catch (ErroDeIO | ErroDeFormatacao | CodigoRepetido | VeiculoDesconhecido | SiglaVeiculoNaoDefinida | QualiDesconhecidoVeiculo | Desconhecido | CodNaoDefinido | QualiDesconhecidoRegra | NumberFormatException | IOException e) {
-			System.err.println(e.getMessage());
-			return false;
-		}
-		return true;
+		sistema.escreveArquivoRecredenciamento(anoRecredenciamento, "upload-dir/1-recredenciamento.csv");
+		sistema.escreveArquivoPublicacoes("upload-dir/2-publicacoes.csv");
+		sistema.escreveArquivoEstatisticas("upload-dir/3-estatisticas.csv");
 
 	}
 
