@@ -98,8 +98,7 @@ public class FileUploadController {
 	@GetMapping("/home")
 	public String home(RedirectAttributes redirectAttributes) {
 		
-		redirectAttributes.addFlashAttribute("title", "Bem-vindo ao sistema do PPGI! " +
-				"Aqui você pode carregar arquivos específicos e gerar arquivos mais específicos ainda");
+		redirectAttributes.addFlashAttribute("title", "Aqui você pode carregar arquivos específicos e gerar arquivos mais específicos ainda");
 		redirectAttributes.addFlashAttribute("message",
 				"Inicie carregando o arquivo de Docentes");
 		

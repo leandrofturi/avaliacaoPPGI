@@ -1,47 +1,108 @@
 <html xmlns:th="https://www.thymeleaf.org">
 
 <head>
+	<link href="https://fonts.googleapis.com/css?family=Baskervville&display=swap" rel="stylesheet">
+
 	<style>
-		a.button {
-		    -webkit-appearance: button;
+		.button{
+		    /* -webkit-appearance: button; */
 		    -moz-appearance: button;
 		    appearance: button;
 		    text-decoration: none;
-		    color: initial;
+			padding: 5px;
+			margin: 10px;
+			margin-bottom: 10px;
+			border: 1px solid;
+			border-radius: 10px;
+			background: rgb(93,188,210);
+			color: black;
+			transition: 200ms;
 		}
+
+		.button:hover{
+			background: rgb(254,255,254);
+			color: black
+		}
+
+		body{
+			margin: 0 auto;
+			text-align: center;
+			margin-top: 10%;
+			background-image:url('https://i.imgur.com/NCULLnm.gif');
+    		background-size:100%;
+    		background-repeat: repeat-y;
+    		background-attachment: fixed;
+    		width:100%;
+		}
+		
+		.table{
+			margin: 10px;
+		}
+
+		.formulario{
+			display: inline-block;
+		}
+
+		.titulo, .subTitulo, .erro, .file, .formulario, .link{
+			font-family: 'Baskervville', serif;
+		}
+
+		.link{
+			color: black;
+			text-align: center;
+		}
+
+		.bloco{
+			margin: 10px;
+			margin: 20px;
+    		background: rgba(208, 211, 189, 0.75);
+    		/* opacity: 20; */
+    		padding-top: 30px;
+    		padding-bottom: 20px;
+		}
+
 	</style>
+	
+
 </head>
 
 <body>
 
-	<div th:if="${title}">
-		<h2 th:text="${title}"/>
-	</div>
+	<div class="bloco">
 
-	<div th:if="${erro}">
-		<h2 th:text="${erro}"/>
-	</div>
+		<div class="titulo">
+			<h1>Sistema PPGI</h1>
+		</div>
+		
+		<div class="titulo" th:if="${title}">
+			<h2 th:text="${title}"/>
+		</div>
 
-	<div th:if="${message}">
-		<h2 th:text="${message}"/>
-	</div>
+		<div class="erro" th:if="${erro}">
+			<h2 th:text="${erro}"/>
+		</div>
 
-	<div>
-		<ul>
-			<li th:each="file : ${files}">
-				<a th:href="${file}" th:text="${file}" />
-			</li>
-		</ul>
-	</div>
+		<div class="subTitulo" th:if="${message}">
+			<h2 th:text="${message}"/>
+		</div>
 
-	<div>
-		<form method="POST" enctype="multipart/form-data" action="/">
-                        <a href="new" class="button"> Iniciar novo recadastro </a>
-			<table>
-				<tr><td>File to upload:</td><td><input type="file" name="file" /></td></tr>
-				<tr><td></td><td><input type="submit" value="Upload" /></td></tr>
-			</table>
-		</form>
+		<div>
+			<ul>
+				<li th:each="file : ${files}">
+					<a class="link" th:href="${file}" th:text="${file}" />
+				</li>
+			</ul>
+		</div>
+
+		<div class="formulario">
+			<form method="POST" enctype="multipart/form-data" action="/">
+							<a href="new" class="button"> Iniciar novo recadastro </a>
+				<table class="table">
+					<tr><td>File to upload:</td><td><input type="file" name="file" class="button" /></td></tr>
+					<tr><td></td><td><input class="button" type="submit" value="Upload" /></td></tr>
+				</table>
+			</form>
+		</div>
 	</div>
 
 </body>
