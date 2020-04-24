@@ -1,3 +1,8 @@
-# AvaliaÁ„o PPGI
+# Avalia√ß√£o PPGI
 
-O Programa de PÛs-GraduaÁ„o em Inform·tica (PPGI) da UFES precisa de um sistema de facilite o processo de avaliaÁ„o de docentes credenciados ao programa. Tal c·lculo È feito manualmente todo ano e a coordenaÁ„o do programa gostaria de um software que automatizasse este c·lculo.
+O Programa de P√≥s-Gradua√ß√£o em Inform√°tica (PPGI) da UFES precisa de um sistema de facilite o processo de avalia√ß√£o de docentes credenciados ao programa. Tal c√°lculo √© feito manualmente todo ano e a coordena√ß√£o do programa gostaria de um software que automatizasse este c√°lculo.
+
+Trabalho realizado em duas linguagens: Java (Prog3) e Julia (LP).
+
+Em Java, h√° tamb√©m uma pequena aplica√ß√£o web utilizando spring-boot.
+Em Julia, h√° tamb√©m uma interface mais ou menos iterativa.
