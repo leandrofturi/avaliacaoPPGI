@@ -1,0 +1,1 @@
+julia main.jl -d in/docentes.csv -v in/veiculos.csv -p in/publicacoes.csv -q in/qualis.csv -r in/regras.csv -a 2017
