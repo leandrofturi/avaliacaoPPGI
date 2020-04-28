@@ -202,7 +202,7 @@ function escreve_recredenciamento(ppgi::PPGI, ano_ref::Int64, path::String)
         p = round(calcula_pontuacao(ppgi, d, ano_ref), digits=1)
         if iguais(ppgi.coordenador, d)
             push!(df, [d.nome, p, "Coordenador"])
-        elseif tempo_ingresso(d, ano_ref) < 3
+        elseif tempo_ingresso(d, ano_ref) <= 3
             push!(df, [d.nome, p, "PPJ"])
         elseif idade(d, ano_ref) > 60
             push!(df, [d.nome, p, "PPS"])
@@ -281,7 +281,11 @@ function iterativo()
     ano_ref = parse(Int, chomp(ano_ref))
 
     println("Escrevendo arquivos...")
+    if isdir("out")
+        rm("out", recursive=true)
+    end
     mkdir("out")
+
     escreve_recredenciamento(ppgi, ano_ref, "out/1-recredenciamento.csv")
     escreve_publicacoes(ppgi, ano_ref, "out/2-publicacoes.csv")
     escreve_estatisticas(ppgi, ano_ref, "out/3-estatisticas.csv")
