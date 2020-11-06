@@ -257,6 +257,9 @@ function manual(path_docentes::String, path_veiculos::String, path_qualis::Strin
     carrega_pontuadores(ppgi, path_regras)
 
     println("Escrevendo arquivos...")
+    if isdir("out")
+        rm("out", recursive=true)
+    end
     mkdir("out")
     escreve_recredenciamento(ppgi, ano_ref, "out/1-recredenciamento.csv")
     escreve_publicacoes(ppgi, ano_ref, "out/2-publicacoes.csv")
